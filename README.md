@@ -2,7 +2,7 @@
 
 Automated weekly news digest covering jobs, employment, and development topics across 58 African countries and regional blocs. Published to GitHub Pages every Monday.
 
-**Live site:** https://ivynyayieka.github.io/africa-monitor/
+**Live site:** https://ivynyayieka.github.io/africa-macrotrends-monitor/
 
 ---
 
