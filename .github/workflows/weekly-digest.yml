@@ -13,7 +13,7 @@ on:                           # defines when this workflow runs
 jobs:
   build:                      # name of the job (can be anything)
     runs-on: ubuntu-latest    # use GitHub's Ubuntu Linux runner (free tier)
-    timeout-minutes: 120      # cancel the job if it runs longer than 2 hours (search takes ~60 min for 58 entities)
+    timeout-minutes: 600      # cancel the job if it runs longer than 2 hours (search takes ~60 min for 58 entities)
 
     steps:                    # ordered list of tasks the job performs
 
