@@ -1,37 +1,47 @@
-name: Weekly Africa Digest
+# weekly-digest.yml
+# GitHub Actions workflow — runs the Africa digest pipeline automatically.
+# Place this file at: .github/workflows/weekly-digest.yml
+# in the africa-monitor repo.
 
-on:
+name: Weekly Africa Digest   # display name shown in the GitHub Actions tab
+
+on:                           # defines when this workflow runs
   schedule:
-    - cron: '0 6 * * 1'   # every Monday 06:00 UTC
-  workflow_dispatch:        # manual trigger from the Actions tab
+    - cron: '0 6 * * 1'      # run at 06:00 UTC every Monday (cron format: minute hour day month weekday)
+  workflow_dispatch:          # also allows manual trigger from the Actions tab in GitHub
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120    # search takes ~60 min for all 58 entities
+  build:                      # name of the job (can be anything)
+    runs-on: ubuntu-latest    # use GitHub's Ubuntu Linux runner (free tier)
+    timeout-minutes: 120      # cancel the job if it runs longer than 2 hours (search takes ~60 min for 58 entities)
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    steps:                    # ordered list of tasks the job performs
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - name: Checkout repo                    # step 1: download the repo files onto the runner
+        uses: actions/checkout@v4              # official GitHub action for checking out code
+
+      - name: Set up Python 3.11              # step 2: install Python on the runner
+        uses: actions/setup-python@v5         # official GitHub action for Python setup
         with:
-          python-version: '3.11'
+          python-version: '3.11'              # use Python 3.11 (matches local development environment)
 
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 lxml
+      - name: Install dependencies            # step 3: install the Python libraries the scripts need
+        run: pip install requests beautifulsoup4 lxml   # same libraries installed by sophisticated_search.py at runtime
 
-      - name: Run search (produces results.pkl)
-        run: python sophisticated_search.py
+      - name: Run search                      # step 4: run the main search script
+        run: python sophisticated_search.py   # fetches RSS for all entities, extracts text, saves results.pkl
+                                              # this step takes ~60 minutes for the full 58-entity run
 
-      - name: Run production export (produces HTML + CSV)
-        run: python production_export.py
+      - name: Run production export           # step 5: generate output files from results.pkl
+        run: python production_export.py      # produces news-digest-YYYY-MM-DD.html, index.html, and CSV
 
-      - name: Commit and push outputs
+      - name: Commit and push outputs         # step 6: save the generated files back to the repo
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name  "github-actions[bot]"              # set git author name for the commit
+          git config user.email "github-actions[bot]@users.noreply.github.com"   # set git author email
           git add index.html "news-digest-$(date -u +'%Y-%m-%d').html" "africa-digest-$(date -u +'%Y-%m-%d').csv" || true
+          # ^ stage the three output files; || true prevents failure if files don't exist
+          # $(date -u +'%Y-%m-%d') inserts today's date in YYYY-MM-DD format
           git commit -m "Weekly digest $(date -u +'%Y-%m-%d')" || echo "Nothing to commit"
-          git push
+          # ^ commit with a dated message; if nothing changed, print a message instead of failing
+          git push                            # push the commit to the main branch, triggering GitHub Pages to update
