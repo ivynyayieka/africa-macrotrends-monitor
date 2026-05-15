@@ -455,7 +455,7 @@ def process_entity(entity):
             if len(cat_articles) >= MAX_ARTICLES_PER_CAT:  # already have enough articles for this pillar — stop
                 break
             items = fetch_rss(entity, kw)                  # fetch RSS items for this entity + keyword combination
-            for item in items:
+            for rss_position, item in enumerate(items):   # enumerate gives us the 0-based position in the RSS feed
                 if len(cat_articles) >= MAX_ARTICLES_PER_CAT:   # re-check limit inside inner loop
                     break
                 parsed = parse_item(item)                   # extract structured data from the RSS item
@@ -470,13 +470,14 @@ def process_entity(entity):
                 print(f'         → {real_url}  [{status}]')    # log outcome
 
                 cat_articles.append({                      # store the enriched article record
-                    "title":      parsed["title"],
-                    "url":        real_url,
-                    "source":     parsed["source"],
-                    "date":       parsed["date"],
-                    "paragraphs": paragraphs,
-                    "demo_tags":  parsed["demo_tags"],
-                    "is_google":  is_google,
+                    "title":        parsed["title"],
+                    "url":          real_url,
+                    "source":       parsed["source"],
+                    "date":         parsed["date"],
+                    "paragraphs":   paragraphs,
+                    "demo_tags":    parsed["demo_tags"],
+                    "is_google":    is_google,
+                    "rss_position": rss_position,          # position in the RSS feed (0 = top result, Google's most relevant)
                 })
                 time.sleep(DELAY)                          # pause before next request
 

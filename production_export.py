@@ -73,6 +73,85 @@ WAEMU_MEMBERS = [              # member states of the West African Economic and 
 REGIONAL_SHOW = ["WAEMU", "Africa"]   # regional bloc searches to include in the production report
 
 
+# ── Publisher reach scores ───────────────────────────────────────────────────
+# Approximate audience reach based on known publisher domains/names.
+# Scored 1–10: 10 = global wire services, 9 = major international outlets,
+# 8 = leading African nationals, 7 = strong regional outlets,
+# 6 = smaller regional/local, 3 = default for any unknown publisher.
+# These scores are combined with RSS position and text availability
+# to rank articles by likely popularity before selecting the top 2 per pillar.
+PUBLISHER_REACH = {
+    # Global wire services and tier-1 international
+    "bbc":            10,   # BBC
+    "reuters":        10,   # Reuters
+    "apnews":         10,   # Associated Press
+    "afp":            10,   # Agence France-Presse
+    "bloomberg":      10,   # Bloomberg
+    "aljazeera":       9,   # Al Jazeera
+    "theguardian":     9,   # The Guardian
+    "economist":       9,   # The Economist
+    "ft.com":          9,   # Financial Times
+    "washingtonpost":  9,   # Washington Post
+    "nytimes":         9,   # New York Times
+    "dw.com":          8,   # Deutsche Welle
+    "france24":        8,   # France 24
+    "rfi":             8,   # Radio France Internationale
+    "voaafrica":       8,   # Voice of America Africa
+    # Leading pan-African outlets
+    "theafricareport": 8,   # The Africa Report
+    "africafeeds":     7,   # Africa Feeds
+    "africanews":      7,   # Africanews
+    "businessinsider africa": 7,
+    "quartz":          7,   # Quartz Africa
+    # Leading national outlets by country
+    "businessday":     8,   # Business Day (Nigeria)
+    "premiumtimes":    8,   # Premium Times (Nigeria)
+    "punch":           7,   # Punch (Nigeria)
+    "thecable":        7,   # The Cable (Nigeria)
+    "dailynation":     8,   # Daily Nation (Kenya)
+    "nation.africa":   8,   # Nation Africa (Kenya)
+    "standardmedia":   7,   # Standard Media (Kenya)
+    "capitalfm.co.ke": 7,   # Capital FM Kenya
+    "monitor.co.ug":   7,   # Daily Monitor (Uganda)
+    "newvision":       7,   # New Vision (Uganda)
+    "theeastafrican":  8,   # The East African
+    "myjoyonline":     7,   # Joy Online (Ghana)
+    "graphic.com":     7,   # Graphic Online (Ghana)
+    "ghanaweb":        6,   # GhanaWeb
+    "pulse.ng":        7,   # Pulse Nigeria
+    "pulse.gh":        6,   # Pulse Ghana
+    "dailynews.co.tz": 6,   # Daily News Tanzania
+    "thecitizen.co.tz":7,   # The Citizen Tanzania
+    "thestar.co.ke":   7,   # The Star Kenya
+    "seneweb":         6,   # Seneweb (Senegal)
+    "togofirst":       6,   # Togo First
+    "abidjan.net":     6,   # Abidjan.net
+    "africanreview":   6,   # African Review
+    "cnbcafrica":      8,   # CNBC Africa
+    "trendsnafrica":   5,   # Trends in Africa
+}
+
+
+def reach_score(article, rss_position):
+    """
+    Compute an approximate popularity score for an article.
+    Higher score = more likely to be widely read.
+    Three components:
+      publisher_score  — based on known outlet reach (0–10)
+      position_score   — RSS position 0 (top) adds 5, position 8+ adds 0
+      text_score       — small bonus for articles where we extracted text
+    """
+    url_lo    = article.get("url", "").lower()       # lowercase URL for matching
+    source_lo = article.get("source", "").lower()    # lowercase source name for matching
+    publisher_score = max(                            # find the highest matching publisher score
+        (v for k, v in PUBLISHER_REACH.items() if k in url_lo or k in source_lo),
+        default=3    # unknown publishers get 3 (middling — not zero, since they may still be legitimate)
+    )
+    position_score = max(0, 5 - rss_position)        # position 0 → 5 points, position 5+ → 0 points
+    text_score     = 2 if article.get("paragraphs") else 0   # small bonus for articles with extracted text
+    return publisher_score + position_score + text_score      # combined score
+
+
 # ── HTML helper functions ─────────────────────────────────────────────────────
 
 def esc(s):
@@ -107,6 +186,8 @@ def build_csv(results, path):
         "text_paragraph_3",            # third extracted paragraph
         "has_text",                    # "yes" if any paragraph text was extracted, "no" otherwise
         "is_google_link",              # "yes" if URL is still a Google News link (not resolved to publisher)
+        "rss_position",                # position of article in the Google News RSS feed (0 = top/most relevant)
+        "reach_score",                 # computed popularity score combining publisher authority + RSS position + text availability
     ]
     rows = []                          # list of dicts, one per article
     for r in results:                  # loop through each entity
@@ -130,6 +211,8 @@ def build_csv(results, path):
                     "text_paragraph_3": paras[2] if len(paras) > 2 else "",   # third para or blank
                     "has_text":         "yes" if paras else "no",
                     "is_google_link":   "yes" if "google.com" in a["url"] else "no",
+                    "rss_position":     a.get("rss_position", ""),   # RSS feed position (0 = top)
+                    "reach_score":      reach_score(a, a.get("rss_position", 99)),   # computed popularity score
                 })
     with open(path, "w", newline="", encoding="utf-8") as f:   # open file for writing, UTF-8 for special characters
         writer = csv.DictWriter(f, fieldnames=fields)           # create a dict-based CSV writer
@@ -158,9 +241,11 @@ def render_entity(entity_data, max_per_pillar=MAX_PER_PILLAR):
         articles = entity_data["categories"].get(pillar, [])   # get articles for this pillar
         if not articles:                           # no articles found for this pillar — skip
             continue
-        with_text    = [a for a in articles if a.get("paragraphs")]      # articles where text was extracted
-        without_text = [a for a in articles if not a.get("paragraphs")]  # articles with only a link
-        top = (with_text + without_text)[:max_per_pillar]   # prefer text articles, fill up to limit
+        top = sorted(                                          # sort all articles by reach score, highest first
+            articles,
+            key=lambda a: reach_score(a, a.get("rss_position", 99)),   # rss_position stored during search; 99 = unknown
+            reverse=True                                   # descending: highest score = most popular = shown first
+        )[:max_per_pillar]                                 # take the top N after sorting
         if not top:
             continue
         icon = PILLAR_ICONS.get(pillar, "")        # emoji icon for this pillar
