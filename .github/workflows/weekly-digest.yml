@@ -1,0 +1,37 @@
+name: Weekly Africa Digest
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # every Monday 06:00 UTC
+  workflow_dispatch:        # manual trigger from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120    # search takes ~60 min for all 58 entities
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run search (produces results.pkl)
+        run: python sophisticated_search.py
+
+      - name: Run production export (produces HTML + CSV)
+        run: python production_export.py
+
+      - name: Commit and push outputs
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html "news-digest-$(date -u +'%Y-%m-%d').html" "africa-digest-$(date -u +'%Y-%m-%d').csv" || true
+          git commit -m "Weekly digest $(date -u +'%Y-%m-%d')" || echo "Nothing to commit"
+          git push
