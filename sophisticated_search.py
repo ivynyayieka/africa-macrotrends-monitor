@@ -447,47 +447,47 @@ RESULTS_PATH    = "results.pkl"      # final output read by production_export.py
 
 def load_checkpoint():
     """Load partially completed results from a previous interrupted run."""
-    if os.path.exists(CHECKPOINT_PATH):          # checkpoint exists from a previous run
-        with open(CHECKPOINT_PATH, "rb") as f:
-            cp = pickle.load(f)
+    if os.path.exists(CHECKPOINT_PATH):              # checkpoint file exists — a previous run was interrupted
+        with open(CHECKPOINT_PATH, "rb") as f:       # open the binary checkpoint file
+            cp = pickle.load(f)                      # deserialise the saved progress dict
         print(f"Resuming from checkpoint: {len(cp['results'])} entities already done")
-        return cp["results"], set(cp["done_entities"])   # return saved results and set of completed names
-    return [], set()                             # no checkpoint — start fresh
+        return cp["results"], set(cp["done_entities"])   # return saved results + set of completed entity names
+    return [], set()                                 # no checkpoint — start fresh with empty results
 
 
 def save_checkpoint(results, done_entities):
-    """Append current progress to the checkpoint file after each entity."""
-    with open(CHECKPOINT_PATH, "wb") as f:
+    """Write current progress to disk after each entity so a restart can resume from here."""
+    with open(CHECKPOINT_PATH, "wb") as f:           # overwrite checkpoint with latest progress
         pickle.dump({
-            "results":       results,            # all results collected so far
-            "done_entities": list(done_entities),# list of entity names already processed
+            "results":       results,                # all entity results collected so far
+            "done_entities": list(done_entities),    # list of entity names already processed
         }, f)
 
 
 # ── RUN WITH CHECKPOINT ───────────────────────────────────────────────────────
 
-entities  = TEST_ENTITIES if TEST_MODE else ALL_ENTITIES
-generated = TODAY.strftime("%a, %d %b %Y %H:%M UTC")
+entities  = TEST_ENTITIES if TEST_MODE else ALL_ENTITIES   # choose test or full entity list
+generated = TODAY.strftime("%a, %d %b %Y %H:%M UTC")      # human-readable timestamp for output files
 
 print(f"Generated: {generated}  |  after:{DATE_FROM}")
 print(f"Mode: {'TEST' if TEST_MODE else 'FULL'} — {len(entities)} entities × {len(CATEGORIES)} categories")
 print("=" * 60)
 
-# Load any checkpoint from a previous interrupted run
+# Load any checkpoint from a previous interrupted run — skips already-done entities
 results, done_entities = load_checkpoint()
 
 for entity in entities:
-    if entity in done_entities:                  # already processed in a previous run — skip
+    if entity in done_entities:                      # this entity was completed in a previous run — skip it
         print(f"  [checkpoint] skipping {entity} — already done")
         continue
-    result = process_entity(entity)             # run the full search for this entity
-    results.append(result)
-    done_entities.add(entity)                   # mark as done
-    save_checkpoint(results, done_entities)     # save progress immediately after each entity
+    result = process_entity(entity)                 # run the full search for this entity (~2–3 min each)
+    results.append(result)                          # add this entity's results to the running list
+    done_entities.add(entity)                       # record that this entity is now complete
+    save_checkpoint(results, done_entities)         # write progress to disk immediately in case of future failure
     print(f"  [checkpoint saved — {len(done_entities)}/{len(entities)} done]")
 
-total_a = sum(len(a) for r in results for a in r["categories"].values())
-total_t = sum(1 for r in results for v in r["categories"].values() for a in v if a["paragraphs"])
+total_a = sum(len(a) for r in results for a in r["categories"].values())            # total article count
+total_t = sum(1 for r in results for v in r["categories"].values() for a in v if a["paragraphs"])  # with text
 print(f"\nDone: {len(results)} entities | {total_a} articles | {total_t} with text")
 
 # ── Save final results.pkl for production_export.py ───────────────────────────
