@@ -157,6 +157,6 @@ then run. Takes about 5 minutes.
 ## Notes
 
 - Article text is reproduced verbatim from source pages. Where text is not accessible (paywalled or blocked), only the title and link are shown.
-- The production report shows a maximum of 2 articles per pillar per country, prioritising articles where text was successfully extracted.
+- The production report shows a maximum of 2 articles per pillar per country, prioritising articles by estimated popularity (publisher reach, RSS position, and whether text was extracted).
 - This digest is produced automatically. It has not been editorially reviewed. Kindly click each article title to read the full piece on the original publisher's site.
 - Google News RSS is free and requires no authentication. The pipeline has no paid dependencies.
