@@ -1,9 +1,9 @@
 # production_export.py
 # Reads results.pkl written by sophisticated_search.py.
 # Produces three output files:
-#   africa-digest-YYYY-MM-DD.csv      full data export of all articles
-#   news-digest-YYYY-MM-DD.html       production report (countries of presence + WAEMU + regional)
-#   index.html                        archive landing page listing all past issues
+#   africa-digest-YYYY-MM-DD.csv        full data export of all articles
+#   news-digest-YYYY-MM-DD.html         production report for GitHub Pages
+#   index.html                          archive landing page listing all past issues
 
 # ── Standard library imports ──────────────────────────────────────────────────
 import pickle    # loads the binary results file saved by sophisticated_search.py
@@ -26,60 +26,41 @@ total_t   = data["total_t"]    # number of those articles where text was success
 print(f"Loaded {len(results)} entities | {total_a} articles | {total_t} with text")
 
 # ── Shared display constants ──────────────────────────────────────────────────
-DEMO_LABELS = {                # maps demographic detection keys to display labels
-    "youth":     "youth",
-    "women":     "women",
-    "disabilit": "disabilities",
-    "refugee":   "refugees",
+DEMO_LABELS = {                # maps demographic detection keys to human-readable display labels
+    "youth":     "Youth",
+    "women":     "Women",
+    "disabilit": "Disabilities",
+    "refugee":   "Refugees",
+    "wdl":       "World Data Lab",   # World Data Lab mention tag
 }
 
-PILLAR_ORDER = [               # controls the order pillars appear in the HTML output
-    "Jobs & Employment",
-    "Macroeconomy",
-    "Digital Economy",
-    "Governance",
-    "Agrifood & Climate",
-    "Workforce & Human Capital",
-]
-
-PILLAR_ICONS = {               # emoji icon shown next to each pillar label in the HTML
-    "Jobs & Employment":         "💼",
-    "Macroeconomy":              "📊",
-    "Digital Economy":           "🌐",
-    "Governance":                "🏛",
-    "Agrifood & Climate":        "🌱",
-    "Workforce & Human Capital": "🎓",
-}
-
-DEMO_COLOURS = {               # CSS background colours for demographic badge tags
-    "youth":     "#2563eb",    # blue
-    "women":     "#7c3aed",    # purple
-    "disabilit": "#059669",    # green
-    "refugee":   "#d97706",    # amber
+DEMO_COLOURS = {               # CSS background colours for demographic and mention tags
+    "youth":     "#1a3a5c",    # dark navy — matches accent colour, serious
+    "women":     "#4a2060",    # deep plum
+    "disabilit": "#1a5c3a",    # dark green
+    "refugee":   "#7a3a10",    # dark amber
+    "wdl":       "#5c1a1a",    # dark crimson — distinct from demographics
 }
 
 # ── Production report configuration ──────────────────────────────────────────
-MAX_PER_PILLAR = 2             # maximum articles shown per pillar per country in the production report
+MAX_PER_COUNTRY = 3            # top N articles per country, pooled across all pillars, ranked by reach score
 
 PRESENCE = [                   # countries where the organisation has a direct presence
     "Ethiopia", "Ghana", "Kenya", "Nigeria", "Rwanda", "Senegal", "Uganda",
 ]
 
-WAEMU_MEMBERS = [              # member states of the West African Economic and Monetary Union
+WAEMU_MEMBERS = [              # WAEMU members excluding Senegal (which appears under Countries of Presence)
     "Benin", "Burkina Faso", "Côte d'Ivoire", "Guinea-Bissau",
-    "Mali", "Niger", "Senegal", "Togo",
+    "Mali", "Niger", "Togo",
 ]
 
-REGIONAL_SHOW = ["WAEMU", "Africa"]   # regional bloc searches to include in the production report
+REGIONAL_SHOW = ["WAEMU", "Africa"]   # regional bloc searches to include
 
 
-# ── Publisher reach scores ───────────────────────────────────────────────────
-# Approximate audience reach based on known publisher domains/names.
-# Scored 1–10: 10 = global wire services, 9 = major international outlets,
-# 8 = leading African nationals, 7 = strong regional outlets,
-# 6 = smaller regional/local, 3 = default for any unknown publisher.
-# These scores are combined with RSS position and text availability
-# to rank articles by likely popularity before selecting the top 2 per pillar.
+# ── Publisher reach scores ────────────────────────────────────────────────────
+# Scored 1–10: 10 = global wire services, 9 = major international,
+# 8 = leading African nationals, 7 = strong regional, 6 = smaller local,
+# 3 = default for any unknown publisher.
 PUBLISHER_REACH = {
     # Global wire services and tier-1 international
     "bbc":            10,   # BBC
@@ -101,7 +82,6 @@ PUBLISHER_REACH = {
     "theafricareport": 8,   # The Africa Report
     "africafeeds":     7,   # Africa Feeds
     "africanews":      7,   # Africanews
-    "businessinsider africa": 7,
     "quartz":          7,   # Quartz Africa
     # Leading national outlets by country
     "businessday":     8,   # Business Day (Nigeria)
@@ -135,66 +115,82 @@ PUBLISHER_REACH = {
 def reach_score(article, rss_position):
     """
     Compute an approximate popularity score for an article.
-    Higher score = more likely to be widely read.
     Three components:
-      publisher_score  — based on known outlet reach (0–10)
-      position_score   — RSS position 0 (top) adds 5, position 8+ adds 0
-      text_score       — small bonus for articles where we extracted text
+      publisher_score — based on known outlet reach (0–10)
+      position_score  — RSS position 0 (top) adds 5, position 5+ adds 0
+      text_score      — small bonus for articles where text was extracted
     """
     url_lo    = article.get("url", "").lower()       # lowercase URL for matching
     source_lo = article.get("source", "").lower()    # lowercase source name for matching
-    publisher_score = max(                            # find the highest matching publisher score
+    publisher_score = max(                            # find highest matching publisher score
         (v for k, v in PUBLISHER_REACH.items() if k in url_lo or k in source_lo),
-        default=3    # unknown publishers get 3 (middling — not zero, since they may still be legitimate)
+        default=3    # unknown publishers get 3 — not zero, may still be legitimate
     )
-    position_score = max(0, 5 - rss_position)        # position 0 → 5 points, position 5+ → 0 points
-    text_score     = 2 if article.get("paragraphs") else 0   # small bonus for articles with extracted text
-    return publisher_score + position_score + text_score      # combined score
+    position_score = max(0, 5 - rss_position)        # position 0 → 5pts, position 5+ → 0pts
+    text_score     = 2 if article.get("paragraphs") else 0   # bonus for extracted text
+    return publisher_score + position_score + text_score
 
 
-# ── HTML helper functions ─────────────────────────────────────────────────────
+def has_wdl_mention(article):
+    """Return True if 'World Data Lab' or 'WDL' appears in the title or extracted paragraphs."""
+    haystack = article.get("title", "").lower()      # start with the title
+    for p in article.get("paragraphs", []):          # add each extracted paragraph
+        haystack += " " + p.lower()
+    return "world data lab" in haystack or " wdl " in haystack or haystack.startswith("wdl ")
+
+
+def get_all_tags(article):
+    """Return all tags for an article: demographic tags + WDL mention tag."""
+    tags = list(article.get("demo_tags", []))        # copy demographic tags from search
+    if has_wdl_mention(article):                     # check for World Data Lab mention
+        tags.append("wdl")                           # add WDL tag if found
+    return tags
+
+
+# ── HTML helpers ──────────────────────────────────────────────────────────────
 
 def esc(s):
-    """Escape special HTML characters to prevent broken markup or XSS."""
+    """Escape special HTML characters."""
     return (
         str(s)
-        .replace("&", "&amp;")    # ampersand must be escaped first
-        .replace("<", "&lt;")     # less-than sign
-        .replace(">", "&gt;")     # greater-than sign
-        .replace('"', "&quot;")   # double-quote inside attribute values
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
     )
 
 def make_anchor(s):
-    """Convert a string to a safe HTML id attribute value (letters, digits, underscores only)."""
-    return re.sub(r"[^\w]", "_", s)   # replace anything that isn't alphanumeric or underscore
+    """Convert string to safe HTML id."""
+    return re.sub(r"[^\w]", "_", s)
 
 
 # ── PART 1: CSV EXPORT ────────────────────────────────────────────────────────
 
 def build_csv(results, path):
-    """Write all articles from all entities to a CSV file with one row per article."""
-    fields = [                         # column names in the CSV header row
-        "entity",                      # country or regional bloc name
-        "pillar",                      # which of the 6 analytical pillars the article belongs to
-        "title",                       # article headline
-        "url",                         # direct article URL or Google News link
-        "source",                      # publisher name
-        "date",                        # publication date
-        "demographics",                # comma-separated demographic labels found in the title
-        "text_paragraph_1",            # first extracted paragraph (verbatim from article)
-        "text_paragraph_2",            # second extracted paragraph
-        "text_paragraph_3",            # third extracted paragraph
-        "has_text",                    # "yes" if any paragraph text was extracted, "no" otherwise
-        "is_google_link",              # "yes" if URL is still a Google News link (not resolved to publisher)
-        "rss_position",                # position of article in the Google News RSS feed (0 = top/most relevant)
-        "reach_score",                 # computed popularity score combining publisher authority + RSS position + text availability
+    """Write all articles from all entities to a flat CSV file."""
+    fields = [
+        "entity",          # country or regional bloc name
+        "pillar",          # analytical pillar
+        "title",           # article headline
+        "url",             # direct article URL or Google News link
+        "source",          # publisher name
+        "date",            # publication date
+        "demographics",    # comma-separated demographic labels found in title
+        "wdl_mention",     # yes/no — whether World Data Lab is mentioned
+        "text_paragraph_1",
+        "text_paragraph_2",
+        "text_paragraph_3",
+        "has_text",        # yes if any paragraph text was extracted
+        "is_google_link",  # yes if URL is still a Google News redirect
+        "rss_position",    # position in Google News RSS feed (0 = top)
+        "reach_score",     # computed popularity score
     ]
-    rows = []                          # list of dicts, one per article
-    for r in results:                  # loop through each entity
-        entity = r["entity"]           # country or region name
-        for pillar, articles in r["categories"].items():   # loop through each pillar for this entity
-            for a in articles:         # loop through each article in this pillar
-                paras = a.get("paragraphs", [])            # extracted text paragraphs (may be empty list)
+    rows = []
+    for r in results:
+        entity = r["entity"]
+        for pillar, articles in r["categories"].items():
+            for a in articles:
+                paras = a.get("paragraphs", [])
                 rows.append({
                     "entity":           entity,
                     "pillar":           pillar,
@@ -202,330 +198,555 @@ def build_csv(results, path):
                     "url":              a["url"],
                     "source":           a.get("source", ""),
                     "date":             a.get("date", ""),
-                    "demographics":     ", ".join(          # join all demographic labels with comma
+                    "demographics":     ", ".join(
                                             DEMO_LABELS.get(t, t)
                                             for t in a.get("demo_tags", [])
                                         ),
-                    "text_paragraph_1": paras[0] if len(paras) > 0 else "",   # first para or blank
-                    "text_paragraph_2": paras[1] if len(paras) > 1 else "",   # second para or blank
-                    "text_paragraph_3": paras[2] if len(paras) > 2 else "",   # third para or blank
+                    "wdl_mention":      "yes" if has_wdl_mention(a) else "no",
+                    "text_paragraph_1": paras[0] if len(paras) > 0 else "",
+                    "text_paragraph_2": paras[1] if len(paras) > 1 else "",
+                    "text_paragraph_3": paras[2] if len(paras) > 2 else "",
                     "has_text":         "yes" if paras else "no",
                     "is_google_link":   "yes" if "google.com" in a["url"] else "no",
-                    "rss_position":     a.get("rss_position", ""),   # RSS feed position (0 = top)
-                    "reach_score":      reach_score(a, a.get("rss_position", 99)),   # computed popularity score
+                    "rss_position":     a.get("rss_position", ""),
+                    "reach_score":      reach_score(a, a.get("rss_position", 99)),
                 })
-    with open(path, "w", newline="", encoding="utf-8") as f:   # open file for writing, UTF-8 for special characters
-        writer = csv.DictWriter(f, fieldnames=fields)           # create a dict-based CSV writer
-        writer.writeheader()           # write the column names as the first row
-        writer.writerows(rows)         # write all article rows
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
     print(f"Saved CSV: {path}  ({len(rows)} rows)")
 
-csv_path = os.path.join(os.getcwd(), f"africa-digest-{date_slug}.csv")   # full path for the CSV file
-build_csv(results, csv_path)           # run the export
+csv_path = os.path.join(os.getcwd(), f"africa-digest-{date_slug}.csv")
+build_csv(results, csv_path)
 
 
 # ── PART 2: PRODUCTION HTML REPORT ───────────────────────────────────────────
 
-entity_map = {r["entity"]: r for r in results}   # dict for quick lookup of entity data by name
-prod_date  = TODAY.strftime("%A %-d %B %Y")       # e.g. "Monday 14 May 2026" for the masthead
+entity_map = {r["entity"]: r for r in results}
+prod_date  = TODAY.strftime("%A %-d %B %Y")   # e.g. "Monday 14 May 2026"
 
 
-def render_entity(entity_data, max_per_pillar=MAX_PER_PILLAR):
+def get_top_articles(entity_data, n=MAX_PER_COUNTRY):
     """
-    Render all pillars for one entity as HTML cards.
-    Prioritises articles with extracted text over google-link-only articles.
-    Shows up to max_per_pillar articles per pillar.
+    Pool all articles across all pillars for one entity,
+    sort by reach score descending, return top N.
+    Deduplicates by URL in case the same article appeared in multiple pillars.
     """
-    html = ""
-    for pillar in PILLAR_ORDER:                    # iterate pillars in defined display order
-        articles = entity_data["categories"].get(pillar, [])   # get articles for this pillar
-        if not articles:                           # no articles found for this pillar — skip
-            continue
-        top = sorted(                                          # sort all articles by reach score, highest first
-            articles,
-            key=lambda a: reach_score(a, a.get("rss_position", 99)),   # rss_position stored during search; 99 = unknown
-            reverse=True                                   # descending: highest score = most popular = shown first
-        )[:max_per_pillar]                                 # take the top N after sorting
-        if not top:
-            continue
-        icon = PILLAR_ICONS.get(pillar, "")        # emoji icon for this pillar
-        html += f'<div class="pillar-block"><div class="pillar-label">{icon} {esc(pillar)}</div>\n'
-        for a in top:                              # render each selected article as a card
-            is_google = "google.com" in a["url"]  # True if URL is still a Google News redirect
-            demo_html = ""
-            if a.get("demo_tags"):                 # if demographic keywords were found in the title
-                demo_html = '<div class="demo-row">' + "".join(
-                    f'<span class="dtag" style="background:{DEMO_COLOURS.get(t, "#888")}">'
-                    f'{DEMO_LABELS.get(t, t)}</span>'
-                    for t in a["demo_tags"]        # one coloured badge per demographic tag
-                ) + "</div>"
-            meta = " · ".join(                     # source name and date joined by a middle dot
-                p for p in [a.get("source", ""), a.get("date", "")] if p
-            )
-            paras = a.get("paragraphs", [])
-            if paras:                              # text was extracted — show it as an excerpt
-                ex_html = (
-                    '<div class="excerpt">'
-                    + "".join(f"<p>{esc(p)}</p>" for p in paras)
-                    + "</div>"
-                )
-            else:                                  # no text — show a short note instead
-                note = "Click to read →" if is_google else "Text not accessible"
-                ex_html = f'<p class="no-text">{note}</p>'
-            html += (                              # assemble the full card HTML
-                f'<div class="card">\n'
-                f'{demo_html}'                     # demographic badges (may be empty string)
-                f'<a class="card-title" href="{esc(a["url"])}" target="_blank" rel="noopener">'
-                f'{esc(a["title"])}</a>\n'          # clickable article title
-                + (f'<div class="card-meta">{esc(meta)}</div>\n' if meta else "")  # source · date line
-                + ex_html                          # excerpt or "click to read" note
-                + "\n</div>\n"
-            )
-        html += "</div>\n"                         # close pillar-block div
+    seen_urls = set()
+    all_articles = []
+    for pillar, articles in entity_data["categories"].items():
+        for a in articles:
+            if a["url"] not in seen_urls:          # deduplicate by URL
+                seen_urls.add(a["url"])
+                all_articles.append(a)
+    return sorted(                                  # sort by reach score, highest first
+        all_articles,
+        key=lambda a: reach_score(a, a.get("rss_position", 99)),
+        reverse=True
+    )[:n]                                           # return top N
+
+
+def render_article_card(a):
+    """Render one article as an HTML card. No pillar label shown."""
+    is_google = "google.com" in a["url"]           # True if URL is a Google News redirect
+    tags      = get_all_tags(a)                    # demographic + WDL tags
+
+    # Tag badges — small inline labels, no emoji, text only
+    tags_html = ""
+    if tags:
+        tags_html = '<div class="tags">' + "".join(
+            f'<span class="tag" style="border-color:{DEMO_COLOURS.get(t, "#555")};color:{DEMO_COLOURS.get(t, "#555")}">'
+            f'{DEMO_LABELS.get(t, t)}</span>'
+            for t in tags
+        ) + "</div>"
+
+    # Source and date line
+    meta = " · ".join(p for p in [a.get("source", ""), a.get("date", "")] if p)
+
+    # Excerpt or hyperlinked "Read article" — never show "Text not accessible"
+    paras = a.get("paragraphs", [])
+    if paras:
+        ex_html = (
+            '<div class="excerpt">'
+            + "".join(f"<p>{esc(p)}</p>" for p in paras)
+            + "</div>"
+        )
+    elif is_google or a.get("url"):                # has a URL — show hyperlinked read prompt
+        ex_html = (
+            f'<p class="read-link">'
+            f'<a href="{esc(a["url"])}" target="_blank" rel="noopener">Read article</a>'
+            f'</p>'
+        )
+    else:                                          # no URL at all — show nothing
+        ex_html = ""
+
+    return (
+        '<article class="card">\n'
+        + tags_html
+        + f'<h4 class="card-hed"><a href="{esc(a["url"])}" target="_blank" rel="noopener">{esc(a["title"])}</a></h4>\n'
+        + (f'<p class="card-meta">{esc(meta)}</p>\n' if meta else "")
+        + ex_html
+        + "\n</article>\n"
+    )
+
+
+def render_entity_block(entity, entity_data):
+    """Render one country/region: heading + top N article cards."""
+    articles = get_top_articles(entity_data)       # pool all pillars, sort by reach, take top 3
+    if not articles:
+        return ""                                  # no articles — skip this entity entirely
+    anchor = make_anchor(entity)
+    html   = f'<div class="entity-block" id="{anchor}">\n'
+    html  += f'<h3 class="entity-hed">{esc(entity)}</h3>\n'
+    for a in articles:
+        html += render_article_card(a)
+    html  += "</div>\n"
     return html
 
 
-def build_section(section_title, section_id, entities):
-    """
-    Build one <section> block containing all entities in the given list.
-    Skips entities with no articles to show.
-    """
-    html = f'<section id="{section_id}"><h2 class="section-title">{esc(section_title)}</h2>\n'
-    found = False                                  # track whether any entity had articles
-    for entity in entities:                        # loop through countries/regions in this section
-        data = entity_map.get(entity)              # look up this entity's results
-        if not data:                               # entity was not searched (e.g. not in results.pkl)
+def render_section(section_label, section_id, entities):
+    """Render one geographic section with a ruled header and entity blocks below."""
+    body = ""
+    for entity in entities:
+        data = entity_map.get(entity)
+        if not data:
             continue
-        body = render_entity(data)                 # render all pillars for this entity
-        if not body:                               # entity had no articles in any pillar
-            continue
-        found = True
-        html += (
-            f'<div class="entity-block">'
-            f'<h3 class="entity-name" id="{make_anchor(entity)}">{esc(entity)}</h3>\n'
-            f'{body}</div>\n'
-        )
-    if not found:                                  # none of the entities in this section had results
-        html += '<p class="empty">No results available for this section this week.</p>\n'
-    return html + "</section>\n"                   # close the section
+        block = render_entity_block(entity, data)
+        if block:
+            body += block
+    if not body:
+        body = '<p class="empty">No results available this week.</p>\n'
+    return (
+        f'<section class="geo-section" id="{section_id}">\n'
+        f'<div class="section-rule"><span class="section-label">{esc(section_label)}</span></div>\n'
+        + body
+        + "</section>\n"
+    )
 
 
-# Build the three sections of the production report
-presence_html = build_section("Countries of Presence", "presence", PRESENCE)
-waemu_html    = build_section("WAEMU Countries",        "waemu",    WAEMU_MEMBERS)
-regional_html = build_section("Regional",               "regional", REGIONAL_SHOW)
+# ── Build sections ────────────────────────────────────────────────────────────
+presence_html = render_section("Countries of Presence", "presence", PRESENCE)
+waemu_html    = render_section("WAEMU",                 "waemu",    WAEMU_MEMBERS)
+regional_html = render_section("Regional",              "regional", REGIONAL_SHOW)
 
-# Build the demographic legend bar shown at the top of the report
-demo_legend = "".join(
-    f'<span class="dtag" style="background:{DEMO_COLOURS[k]}">{DEMO_LABELS[k]}</span>'
-    for k in ["youth", "women", "disabilit", "refugee"]   # one badge per tracked demographic
-)
+# ── Build left sidebar nav ────────────────────────────────────────────────────
+# Lists all countries and regions in reading order so the reader
+# can see the full structure at a glance and jump directly to any country.
+def sidebar_nav():
+    html  = '<nav class="sidebar">\n'
+    html += '<div class="sidebar-inner">\n'
+    # Countries of Presence
+    html += '<p class="nav-section-label">Countries of Presence</p>\n'
+    for entity in PRESENCE:
+        html += f'<a class="nav-link" href="#{make_anchor(entity)}">{esc(entity)}</a>\n'
+    # WAEMU
+    html += '<p class="nav-section-label">WAEMU</p>\n'
+    for entity in WAEMU_MEMBERS:
+        html += f'<a class="nav-link" href="#{make_anchor(entity)}">{esc(entity)}</a>\n'
+    # Regional
+    html += '<p class="nav-section-label">Regional</p>\n'
+    for entity in REGIONAL_SHOW:
+        html += f'<a class="nav-link" href="#{make_anchor(entity)}">{esc(entity)}</a>\n'
+    html += '</div>\n</nav>\n'
+    return html
 
-# ── Assemble full production HTML ─────────────────────────────────────────────
+nav_html = sidebar_nav()
+
+# ── Assemble production HTML ──────────────────────────────────────────────────
 prod_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Africa Employment &amp; Development Monitor — {prod_date}</title>
+<title>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends — {prod_date}</title>
 <style>
-/* Reset: remove default browser margin/padding and use border-box sizing */
+/* ── Reset ── */
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-/* CSS custom properties (variables) for consistent colours and fonts */
+
+/* ── Design tokens ── */
 :root {{
-  --ink:    #0f0f0f;   /* near-black for body text */
-  --ink-2:  #3a3a3a;   /* slightly lighter for excerpts */
-  --ink-3:  #777;      /* grey for metadata and secondary text */
-  --paper:  #f8f6f1;   /* warm off-white page background */
-  --card:   #ffffff;   /* pure white card backgrounds */
-  --rule:   #e2ddd4;   /* warm grey for borders and dividers */
-  --accent: #1a3a5c;   /* dark navy for masthead, country headings, links */
-  --gold:   #b8832a;   /* warm gold for section labels and decorative accents */
-  --serif:  Georgia, "Times New Roman", serif;    /* serif font for body text */
-  --sans:   system-ui, -apple-system, "Segoe UI", sans-serif;   /* sans-serif for labels */
+  --paper:      #f5f2eb;   /* warm cream — aged newsprint feel */
+  --ink:        #1a1a18;   /* near-black body text */
+  --ink-2:      #3d3d38;   /* secondary text */
+  --ink-3:      #7a7a72;   /* captions, metadata */
+  --rule:       #ccc9be;   /* horizontal rules, borders */
+  --rule-heavy: #1a1a18;   /* thick rules for section breaks */
+  --accent:     #1c3d5c;   /* deep ink blue — headers, links */
+  --serif:      "Georgia", "Times New Roman", serif;
+  --sans:       "Helvetica Neue", "Arial", sans-serif;
+  --mono:       "Courier New", monospace;
+  --col-width:  680px;     /* main content column */
+  --sidebar-w:  180px;     /* left sidebar width */
 }}
-html {{ scroll-behavior: smooth; }}   /* smooth scrolling when nav links are clicked */
-body {{ font-family: var(--serif); background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.75; }}
 
-/* Masthead: full-width dark banner at the top */
-.masthead {{ background: var(--accent); color: #fff; padding: 52px 24px 40px; text-align: center; }}
-.kicker {{ font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }}
-.masthead h1 {{ font-size: clamp(24px, 5vw, 42px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }}
-.masthead-date {{ font-family: var(--sans); font-size: 13px; opacity: 0.55; margin-bottom: 24px; }}
-.masthead-note {{ font-family: var(--sans); font-size: 12px; opacity: 0.5; max-width: 520px; margin: 0 auto; line-height: 1.55; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 18px; }}
+/* ── Base ── */
+html {{ scroll-behavior: smooth; font-size: 16px; }}
+body {{
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+}}
 
-/* Sticky navigation bar: stays at top when scrolling */
-.nav {{ background: var(--accent); border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: center; position: sticky; top: 0; z-index: 50; }}
-.nav a {{ font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.65); text-decoration: none; padding: 13px 22px; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }}
-.nav a:hover {{ color: #fff; border-bottom-color: var(--gold); }}
+/* ── Page header — newspaper masthead style ── */
+.masthead {{
+  border-bottom: 3px double var(--rule-heavy);   /* double rule like a broadsheet */
+  padding: 36px 24px 20px;
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}}
+.masthead-eyebrow {{
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}}
+.masthead h1 {{
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}}
+.masthead-dateline {{
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 7px 0;
+  margin-top: 14px;
+}}
 
-/* Thin legend bar below nav showing demographics and pillar icons */
-.legend-bar {{ background: var(--card); border-bottom: 1px solid var(--rule); padding: 10px 24px; text-align: center; font-family: var(--sans); font-size: 11px; color: var(--ink-3); line-height: 2; }}
-.legend-bar strong {{ color: var(--ink-2); }}
+/* ── Page layout: sidebar + content ── */
+.page-wrap {{
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0 0 80px;
+}}
 
-/* Main content area: centred, max 880px wide */
-.container {{ max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }}
+/* ── Left sidebar navigation ── */
+.sidebar {{
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  border-right: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 28px 0;
+}}
+.sidebar-inner {{
+  padding: 0 16px;
+}}
+.nav-section-label {{
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 5px;
+  margin: 20px 0 8px;
+}}
+.nav-section-label:first-child {{ margin-top: 0; }}
+.nav-link {{
+  display: block;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 0;
+  line-height: 1.4;
+}}
+.nav-link:hover {{ text-decoration: underline; }}
 
-/* Section: one per geographic grouping (Countries of Presence, WAEMU, Regional) */
-section {{ margin-top: 60px; }}
-.section-title {{ font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 36px; }}
+/* ── Main content column ── */
+.content {{
+  flex: 1;
+  min-width: 0;
+  padding: 28px 32px;
+}}
 
-/* Entity block: one per country or region within a section */
-.entity-block {{ margin-bottom: 52px; }}
-.entity-name {{ font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 24px; padding-left: 14px; border-left: 4px solid var(--gold); }}
+/* ── Geographic section break ── */
+.geo-section {{ margin-bottom: 60px; }}
+.section-rule {{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  margin-top: 52px;
+}}
+.geo-section:first-child .section-rule {{ margin-top: 0; }}
+.section-rule::before {{
+  content: '';
+  flex: 0 0 32px;
+  height: 3px;
+  background: var(--rule-heavy);   /* short thick rule before label */
+}}
+.section-rule::after {{
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);         /* long thin rule after label */
+}}
+.section-label {{
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}}
 
-/* Pillar block: groups of cards within one entity, one per analytical pillar */
-.pillar-block {{ margin-bottom: 24px; }}
-.pillar-label {{ font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); padding: 5px 0; border-bottom: 1px solid var(--rule); margin-bottom: 12px; }}
+/* ── Country/region heading ── */
+.entity-block {{ margin-bottom: 44px; }}
+.entity-hed {{
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
+}}
 
-/* Card: one article */
-.card {{ background: var(--card); border: 1px solid var(--rule); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0; padding: 15px 18px; margin-bottom: 12px; }}
-.card-title {{ font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--ink); text-decoration: none; display: block; margin-bottom: 4px; line-height: 1.4; }}
-.card-title:hover {{ color: var(--accent); text-decoration: underline; }}
-.card-meta {{ font-family: var(--sans); font-size: 11px; color: var(--ink-3); margin-bottom: 10px; }}
-.excerpt {{ font-size: 14px; line-height: 1.75; color: var(--ink-2); margin-top: 8px; }}
+/* ── Article card — clean, editorial, no decorative borders ── */
+.card {{
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);   /* simple ruled separator between articles */
+}}
+.card:last-child {{
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}}
+.card-hed {{
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}}
+.card-hed a {{
+  color: var(--ink);
+  text-decoration: none;
+}}
+.card-hed a:hover {{
+  color: var(--accent);
+  text-decoration: underline;
+}}
+.card-meta {{
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+}}
+.excerpt {{
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}}
 .excerpt p {{ margin-bottom: 8px; }}
 .excerpt p:last-child {{ margin: 0; }}
-.no-text {{ font-family: var(--sans); font-size: 12px; color: var(--ink-3); font-style: italic; margin-top: 6px; }}
+.read-link {{
+  font-family: var(--sans);
+  font-size: 12px;
+  margin-top: 6px;
+}}
+.read-link a {{
+  color: var(--accent);
+  text-decoration: underline;
+}}
 
-/* Demographic badge tags */
-.demo-row {{ margin-bottom: 7px; }}
-.dtag {{ display: inline-block; font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; padding: 2px 8px; border-radius: 20px; margin-right: 4px; }}
+/* ── Tags — small outlined labels, no filled backgrounds, text only ── */
+.tags {{ margin-bottom: 8px; }}
+.tag {{
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid currentColor;   /* uses the colour variable set inline */
+  border-radius: 2px;
+  margin-right: 5px;
+  line-height: 1.6;
+}}
 
-/* Footer */
-.footer {{ margin-top: 80px; padding: 36px 20px; border-top: 1px solid var(--rule); text-align: center; font-family: var(--sans); font-size: 12px; color: var(--ink-3); line-height: 1.8; }}
+/* ── Footer ── */
+.footer {{
+  border-top: 3px double var(--rule);   /* double rule mirrors masthead */
+  padding: 32px 24px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  max-width: 1100px;
+  margin: 0 auto;
+}}
 .footer strong {{ color: var(--ink-2); }}
-.empty {{ font-family: var(--sans); font-size: 13px; color: var(--ink-3); font-style: italic; margin: 20px 0; }}
+
+/* ── Mobile: collapse sidebar to top list ── */
+@media (max-width: 700px) {{
+  .page-wrap {{ flex-direction: column; }}
+  .sidebar {{
+    width: 100%;
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+    overflow-y: visible;
+  }}
+  .sidebar-inner {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 0 16px;
+  }}
+  .nav-section-label {{
+    width: 100%;
+    margin: 10px 0 4px;
+  }}
+  .content {{ padding: 20px 16px; }}
+}}
+
+.empty {{ font-family: var(--sans); font-size: 13px; color: var(--ink-3); font-style: italic; }}
 </style>
 </head>
 <body>
 
-<!-- Masthead banner with title, date, and automated disclaimer -->
-<div class="masthead">
-  <div class="kicker">Weekly Intelligence Briefing</div>
-  <h1>Africa Employment &amp;<br>Development Monitor</h1>
-  <div class="masthead-date">{prod_date}</div>
-  <div class="masthead-note">
-    This roundup is produced automatically through a news scraper. Articles are sourced
-    from Google News RSS across six analytical pillars. Kindly click each article title
-    to read the full piece on the original publisher's site.
-  </div>
+<!-- Newspaper-style masthead -->
+<header class="masthead">
+  <p class="masthead-eyebrow">Weekly News Roundup</p>
+  <h1>Africa Youth Employment<br>&amp; Macrotrends</h1>
+  <p class="masthead-dateline">{prod_date}</p>
+</header>
+
+<!-- Page body: sidebar + scrolling content -->
+<div class="page-wrap">
+
+  <!-- Left sidebar: full country/region index -->
+  {nav_html}
+
+  <!-- Main content: continuous scroll through all sections -->
+  <main class="content">
+    {presence_html}
+    {waemu_html}
+    {regional_html}
+  </main>
+
 </div>
 
-<!-- Sticky navigation links to each section -->
-<nav class="nav">
-  <a href="#presence">Countries of Presence</a>
-  <a href="#waemu">WAEMU</a>
-  <a href="#regional">Regional</a>
-</nav>
-
-<!-- Thin bar showing demographic badges and pillar icons -->
-<div class="legend-bar">
-  <strong>Demographics:</strong> &nbsp;{demo_legend}&nbsp;&nbsp;|&nbsp;&nbsp;
-  <strong>Pillars:</strong> 💼 Jobs &amp; Employment &nbsp;·&nbsp;
-  📊 Macroeconomy &nbsp;·&nbsp; 🌐 Digital Economy &nbsp;·&nbsp;
-  🏛 Governance &nbsp;·&nbsp; 🌱 Agrifood &amp; Climate &nbsp;·&nbsp;
-  🎓 Workforce &amp; Human Capital
-</div>
-
-<!-- Main content: three geographic sections -->
-<div class="container">
-{presence_html}
-{waemu_html}
-{regional_html}
-</div>
-
-<!-- Footer with generation metadata and repeat of demographic legend -->
-<div class="footer">
-  <strong>Africa Employment &amp; Development Monitor</strong><br>
-  Generated automatically · {generated}<br>
-  Source: Google News RSS · Up to {MAX_PER_PILLAR} articles per pillar per country<br>
-  Excerpts reproduced verbatim from source pages. Click any title to read in full.<br><br>
-  {demo_legend} — demographic tags appear where mentioned in article titles
-</div>
+<!-- Footer with scraping disclaimer -->
+<footer class="footer">
+  <strong>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends</strong><br>
+  {prod_date} &nbsp;·&nbsp; {generated}<br>
+  Articles sourced from Google News RSS. Up to {MAX_PER_COUNTRY} articles per country, ranked by estimated reach.<br>
+  Excerpts are reproduced verbatim from publisher pages where accessible.<br><br>
+  This roundup is produced automatically through a news scraper. Kindly click each article
+  title to read the full piece on the original publisher's site. Content has not been
+  editorially reviewed.<br><br>
+  Tags: <strong>Youth · Women · Disabilities · Refugees · World Data Lab</strong> —
+  applied where mentioned in article titles or extracted text.
+</footer>
 
 </body>
 </html>"""
 
-# ── Save the production report with a date-stamped filename ──────────────────
-prod_filename = f"news-digest-{date_slug}.html"                   # e.g. news-digest-2026-05-14.html
-prod_path     = os.path.join(os.getcwd(), prod_filename)          # full path in current directory
+# ── Save production report ────────────────────────────────────────────────────
+prod_filename = f"news-digest-{date_slug}.html"              # e.g. news-digest-2026-05-25.html
+prod_path     = os.path.join(os.getcwd(), prod_filename)
 with open(prod_path, "w", encoding="utf-8") as f:
     f.write(prod_html)
 print(f"Saved production report: {prod_path}")
 
 
-# ── Update the archive index.html ─────────────────────────────────────────────
-# index.html lists all past digest issues as a simple linked list.
-# Each run adds the new issue to the top. Existing links are preserved.
+# ── Update archive index.html ─────────────────────────────────────────────────
+index_path      = os.path.join(os.getcwd(), "index.html")
+archive_entries = []                                         # list of (filename, display_date) tuples
 
-index_path = os.path.join(os.getcwd(), "index.html")   # path to the archive page
-
-archive_entries = []                         # will hold (filename, display_date) tuples
-if os.path.exists(index_path):              # if an index already exists, extract its links
+if os.path.exists(index_path):                              # preserve existing issue links
     with open(index_path, "r", encoding="utf-8") as f:
         existing = f.read()
-    for m in re.finditer(                   # find all existing digest links in the current index
-        r'href="(news-digest-[\d-]+\.html)"[^>]*>([^<]+)<', existing
-    ):
-        entry = (m.group(1), m.group(2))    # (filename, label) e.g. ("news-digest-2026-05-07.html", "Monday 7 May 2026")
+    for m in re.finditer(r'href="(news-digest-[\d-]+\.html)"[^>]*>([^<]+)<', existing):
+        entry = (m.group(1), m.group(2))
         if entry not in archive_entries:
             archive_entries.append(entry)
 
-this_entry = (prod_filename, prod_date)     # entry for this week's digest
-if this_entry not in archive_entries:       # only add if not already listed (avoids duplicates on re-run)
-    archive_entries.insert(0, this_entry)   # insert at top so newest issue appears first
+this_entry = (prod_filename, prod_date)
+if this_entry not in archive_entries:
+    archive_entries.insert(0, this_entry)                   # newest issue first
 
-archive_rows = "\n".join(                   # build one <li> per issue
-    f'<li><a href="{fn}">{label}</a></li>'
+archive_rows = "\n".join(
+    f'    <li><a href="{fn}">{label}</a></li>'
     for fn, label in archive_entries
 )
 
-# ── Build the archive index page ──────────────────────────────────────────────
 index_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Africa Employment &amp; Development Monitor</title>
+<title>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends</title>
 <style>
-/* Reset and base */
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-:root {{ --accent: #1a3a5c; --gold: #b8832a; --paper: #f8f6f1; --ink: #0f0f0f; --ink-3: #777; --rule: #e2ddd4; }}
+:root {{ --paper: #f5f2eb; --ink: #1a1a18; --ink-3: #7a7a72; --accent: #1c3d5c; --rule: #ccc9be; }}
 body {{ font-family: Georgia, serif; background: var(--paper); color: var(--ink); }}
-/* Masthead matches the digest pages for visual consistency */
-.masthead {{ background: var(--accent); color: #fff; padding: 60px 24px; text-align: center; }}
-.kicker {{ font-family: system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }}
-h1 {{ font-size: clamp(24px, 5vw, 40px); font-weight: 700; line-height: 1.2; margin-bottom: 10px; }}
-.sub {{ font-family: system-ui, sans-serif; font-size: 13px; opacity: 0.55; }}
-/* Centred content container */
-.container {{ max-width: 640px; margin: 60px auto; padding: 0 20px 80px; }}
-h2 {{ font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-bottom: 24px; }}
-/* Issue list: one item per weekly digest */
+.masthead {{
+  border-bottom: 3px double var(--ink);
+  padding: 48px 24px 24px;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}}
+.eyebrow {{ font-family: sans-serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }}
+h1 {{ font-size: clamp(24px, 5vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 10px; }}
+.dateline {{ font-family: sans-serif; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 10px; margin-top: 14px; }}
+.container {{ max-width: 600px; margin: 52px auto 80px; padding: 0 20px; }}
+h2 {{ font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin-bottom: 20px; }}
 ul {{ list-style: none; }}
 li {{ border-bottom: 1px solid var(--rule); }}
-li a {{ display: block; padding: 14px 0; font-size: 16px; color: var(--accent); text-decoration: none; }}
-li a:hover {{ color: var(--gold); }}
-.footer {{ margin-top: 60px; text-align: center; font-family: system-ui, sans-serif; font-size: 12px; color: var(--ink-3); }}
+li a {{ display: flex; justify-content: space-between; padding: 14px 0; font-size: 16px; color: var(--accent); text-decoration: none; }}
+li a:hover {{ color: var(--ink); }}
+.footer {{ text-align: center; font-family: sans-serif; font-size: 11px; color: var(--ink-3); padding: 32px 24px; border-top: 1px solid var(--rule); max-width: 700px; margin: 0 auto; line-height: 1.7; }}
 </style>
 </head>
 <body>
-<!-- Archive landing page header -->
 <div class="masthead">
-  <div class="kicker">Weekly Intelligence Briefing</div>
-  <h1>Africa Employment &amp;<br>Development Monitor</h1>
-  <div class="sub">Automated weekly digest · Google News RSS · Six analytical pillars</div>
+  <p class="eyebrow">Archive</p>
+  <h1>Weekly News Roundup:<br>Africa Youth Employment &amp; Macrotrends</h1>
+  <p class="dateline">All issues</p>
 </div>
-<!-- List of all past issues, newest first -->
 <div class="container">
-  <h2>All Issues</h2>
+  <h2>Issues</h2>
   <ul>
 {archive_rows}
   </ul>
 </div>
 <div class="footer">
-  Generated automatically each Monday.<br>
-  Articles sourced from Google News RSS. No editorial curation.
+  Produced automatically each Monday from Google News RSS.<br>
+  Content has not been editorially reviewed.
 </div>
 </body>
 </html>"""
@@ -534,8 +755,7 @@ with open(index_path, "w", encoding="utf-8") as f:
     f.write(index_html)
 print(f"Saved archive index: {index_path}")
 
-# ── Summary ───────────────────────────────────────────────────────────────────
-print(f"\nFiles ready to commit to africa-monitor repo:")
-print(f"  {prod_filename}              ← this week's digest")
-print(f"  index.html                   ← archive listing all issues")
-print(f"  africa-digest-{date_slug}.csv  ← full data export")
+print(f"\nFiles ready to commit:")
+print(f"  {prod_filename}")
+print(f"  index.html")
+print(f"  africa-digest-{date_slug}.csv")
