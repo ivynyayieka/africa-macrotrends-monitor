@@ -93,7 +93,7 @@ TEST_MODE     = False                          # set True to run only 3 countrie
 TEST_ENTITIES = COUNTRIES[:3] + ["Africa"]    # entities used when TEST_MODE is True
 
 # ── Fetch limits and timing ───────────────────────────────────────────────────
-MAX_ARTICLES_PER_CAT = 5      # maximum articles kept per keyword string per category
+MAX_ARTICLES_PER_CAT = 3      # maximum articles kept per keyword string per category
 MAX_PARAGRAPHS       = 3      # maximum paragraphs extracted from each article page
 DELAY                = 0.8    # seconds to wait between article fetches — avoids rate limiting
 TIMEOUT              = 12     # seconds before giving up on a single HTTP request
