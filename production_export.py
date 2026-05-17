@@ -51,12 +51,12 @@ MAX_PER_COUNTRY = 3   # articles shown per country/region in the production repo
 
 # Countries where the organisation has a direct operational presence
 PRESENCE = [
-    "Ethiopia", "Ghana", "Kenya", "Nigeria", "Rwanda", "Senegal", "Uganda",
+    "Ethiopia", "Ghana", "Kenya", "Nigeria", "Rwanda", "Senegal", "Uganda",   # Senegal also a WAEMU member but shown here only
 ]
 
 # WAEMU member states — Senegal excluded here because it already appears under PRESENCE
 WAEMU_MEMBERS = [
-    "Benin", "Burkina Faso", "Côte d'Ivoire", "Guinea-Bissau",
+    "Benin", "Burkina Faso", "Côte d'Ivoire", "Guinea-Bissau",   # 7 members; Senegal is the 8th but shown under PRESENCE
     "Mali", "Niger", "Togo",
 ]
 
@@ -124,7 +124,7 @@ PUBLISHER_REACH = {
 }
 
 
-def reach_score(article, rss_position):
+def reach_score(article, rss_position):   # returns integer score — higher means more likely widely read
     """
     Estimate how widely-read an article is likely to be.
     Combines three signals:
@@ -136,7 +136,7 @@ def reach_score(article, rss_position):
     url_lo    = article.get("url",    "").lower()   # lowercase URL for publisher matching
     source_lo = article.get("source", "").lower()   # lowercase source name for matching
     publisher_score = max(                           # find the highest matching score in PUBLISHER_REACH
-        (v for k, v in PUBLISHER_REACH.items() if k in url_lo or k in source_lo),
+        (v for k, v in PUBLISHER_REACH.items() if k in url_lo or k in source_lo),   # match publisher by URL or source name
         default=3    # unknown publishers get 3 — not zero, may still be a legitimate outlet
     )
     position_score = max(0, 5 - rss_position)       # RSS position 0 → 5 pts; position 5+ → 0 pts
@@ -144,19 +144,19 @@ def reach_score(article, rss_position):
     return publisher_score + position_score + text_score      # sum all three components
 
 
-def has_wdl_mention(article):
+def has_wdl_mention(article):   # returns True if World Data Lab is mentioned in title or extracted text
     """
     Return True if 'World Data Lab' or 'WDL' appears in the article title
     or any of the extracted text paragraphs.
     """
     haystack = article.get("title", "").lower()   # start with the title text
     for p in article.get("paragraphs", []):       # add each extracted paragraph
-        haystack += " " + p.lower()
+        haystack += " " + p.lower()   # accumulate all paragraph text for searching
     # check for full name or standalone acronym (spaces prevent matching e.g. "BWDL")
-    return "world data lab" in haystack or " wdl " in haystack or haystack.startswith("wdl ")
+    return "world data lab" in haystack or " wdl " in haystack or haystack.startswith("wdl ")   # check full name or standalone acronym
 
 
-def get_all_tags(article):
+def get_all_tags(article):   # returns combined list of demographic tags + WDL tag if applicable
     """
     Return the complete list of tags for one article:
     demographic detection keys + 'wdl' if World Data Lab is mentioned.
@@ -251,21 +251,21 @@ def get_top_articles(entity_data, n=MAX_PER_COUNTRY):
     """
     Pool all articles from all pillars for one entity, deduplicate by URL,
     sort by reach score descending, and return the top N.
-    This replaces per-pillar selection — the best articles float to the top
-    regardless of which pillar they came from.
+    Returns list of (pillar_name, article) tuples so the pillar label is preserved.
     """
     seen_urls    = set()         # track URLs already added to prevent duplicates
     all_articles = []
-    for pillar, articles in entity_data["categories"].items():   # merge across all 6 pillars
+    for pillar, articles in entity_data["categories"].items():   # merge across all pillars
         for a in articles:
             if a["url"] not in seen_urls:        # only add each URL once
                 seen_urls.add(a["url"])
-                all_articles.append(a)
-    return sorted(                               # sort by reach score, best first
-        all_articles,
-        key=lambda a: reach_score(a, a.get("rss_position", 99)),
+                all_articles.append((pillar, a)) # store (pillar, article) tuple
+    # sort by reach score descending
+    all_articles.sort(
+        key=lambda pa: reach_score(pa[1], pa[1].get("rss_position", 99)),
         reverse=True
-    )[:n]                                        # return the top N articles
+    )
+    return all_articles[:n]                      # return top N (pillar, article) tuples
 
 
 def render_article_card(a):
@@ -322,18 +322,36 @@ def render_article_card(a):
 
 def render_entity_block(entity, entity_data):
     """
-    Render one country or region: a heading followed by its top N article cards.
+    Render one country or region: a heading, then articles grouped by pillar.
+    Top N articles are selected by reach score across all pillars, then
+    grouped under their pillar label for display. Pillars shown in PILLAR_ORDER.
     Returns empty string if no articles — caller skips empty blocks.
     """
-    articles = get_top_articles(entity_data)   # pool all pillars, sort by reach, take top 3
-    if not articles:
+    top_pairs = get_top_articles(entity_data)  # list of (pillar, article) tuples, sorted by reach
+    if not top_pairs:
         return ""                              # nothing to show — skip entirely
+
+    # Group the top articles by pillar, preserving PILLAR_ORDER
+    from collections import defaultdict
+    by_pillar = defaultdict(list)
+    for pillar, a in top_pairs:
+        by_pillar[pillar].append(a)            # group articles under their pillar name
+
     anchor = make_anchor(entity)              # safe HTML id for in-page navigation
     html   = f'<div class="entity-block" id="{anchor}">\n'
-    html  += f'<h3 class="entity-hed">{esc(entity)}</h3>\n'   # country/region heading
-    for a in articles:
-        html += render_article_card(a)        # append one card per article
-    html  += "</div>\n"
+    html  += f'<h3 class="entity-hed">{esc(entity)}</h3>\n'
+
+    for pillar in PILLAR_ORDER:               # iterate in defined order so pillars appear consistently
+        articles = by_pillar.get(pillar, [])
+        if not articles:
+            continue                          # this pillar has no top articles for this entity — skip
+        html += f'<div class="pillar-block">\n'
+        html += f'<div class="pillar-label">{esc(pillar)}</div>\n'   # plain text label, no emoji
+        for a in articles:
+            html += render_article_card(a)    # append one card per article
+        html += "</div>\n"                   # close pillar-block
+
+    html += "</div>\n"                       # close entity-block
     return html
 
 

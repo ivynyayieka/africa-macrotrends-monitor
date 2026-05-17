@@ -1,7 +1,7 @@
-import subprocess, sys
-subprocess.run(
+import subprocess, sys                        # subprocess runs pip; sys gives the current Python executable
+subprocess.run(                                   # install required libraries silently if not already present
     [sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4", "lxml", "-q"],
-    check=False
+    check=False                                   # do not raise an error if pip prints warnings
 )
 
 import requests
@@ -14,24 +14,27 @@ from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
 COUNTRIES = [
+    # West Africa
     "Angola", "Burundi", "Benin", "Burkina Faso", "Botswana",
     "Central African Republic", "Côte d'Ivoire", "Cameroon",
     "Congo Kinshasa", "Congo Brazzaville", "Comoros", "Cape Verde",
+    # East & Horn of Africa
     "Djibouti", "Algeria", "Egypt", "Eritrea", "Ethiopia", "Gabon",
     "Ghana", "Guinea", "Gambia", "Guinea-Bissau", "Equatorial Guinea",
     "Kenya", "Liberia", "Libya", "Lesotho", "Morocco", "Madagascar",
+    # Southern & Central Africa
     "Mali", "Mozambique", "Mauritania", "Mauritius", "Malawi", "Namibia",
     "Niger", "Nigeria", "Rwanda", "Sudan", "Senegal", "Sierra Leone",
     "Somalia", "South Sudan", "São Tomé and Príncipe", "Eswatini", "Chad",
     "Togo", "Tunisia", "Tanzania", "Uganda", "South Africa", "Zambia",
-    "Zimbabwe", "Western Sahara",
+    "Zimbabwe", "Western Sahara",   # 54 countries + Western Sahara = 55 entries
 ]
 
-REGIONAL = [
-    "Africa",
-    "Sahel",
-    "WAEMU",
-    "West African Economic and Monetary Union",
+REGIONAL = [                              # regional bloc queries run in addition to individual countries
+    "Africa",                             # continent-wide search
+    "Sahel",                              # Sahel region
+    "WAEMU",                              # West African Economic and Monetary Union acronym
+    "West African Economic and Monetary Union",   # full name search
 ]
 
 ALL_ENTITIES = COUNTRIES + REGIONAL
@@ -67,19 +70,114 @@ CATEGORIES = {
     ],
 }
 
-DEMOGRAPHICS = ["youth", "women", "disabilit", "refugee"]
-DEMO_LABELS  = {"youth": "youth", "women": "women", "disabilit": "disabilities", "refugee": "refugees"}
-DEMO_COLOURS = {"youth": "#1a6fbf", "women": "#9b2e8a", "disabilit": "#2e8a4a", "refugee": "#bf6a1a"}
 
-TEST_MODE = False  # set True to test on 3 countries only
-TEST_ENTITIES = COUNTRIES[:3] + ["Africa"]
+# ── Country-specific interests from QRM planning ─────────────────────────────
+# Keywords drawn from the QRM Macrotrend planning report for each country.
+# These run as an additional "Country-Specific Context" category for the
+# relevant entities only. Entities not listed here skip this category entirely.
+# For WAEMU, the keywords are applied to all member states individually
+# AND to the "WAEMU" regional query.
+COUNTRY_INTERESTS = {
+    "Ethiopia": [
+        '"rural employment" OR "peri-urban employment" OR "women employment" OR "agro processing"',
+        '"manufacturing jobs" OR "digital economy" OR "dam" OR "agriculture jobs"',
+        '"private sector" OR "enabling policy" OR "job creation" OR "oil shortage"',
+        '"regional conflict" OR "elections Ethiopia" OR "employment Ethiopia"',
+    ],
+    "Rwanda": [
+        '"urban employment" OR "rural employment" OR "RDP" OR "refugee employment"',
+        '"tourism jobs" OR "hospitality jobs" OR "agriculture Rwanda" OR "agrifood"',
+        '"digital economy Rwanda" OR "ICT Rwanda" OR "access to finance" OR "entrepreneurship"',
+        '"MSMEs Rwanda" OR "workforce development Rwanda" OR "skilling" OR "TVET Rwanda"',
+        '"regional conflict Rwanda" OR "migration Rwanda" OR "oil shortage"',
+    ],
+    "Ghana": [
+        '"rural employment Ghana" OR "urban employment Ghana" OR "ultra poor Ghana"',
+        '"women employment Ghana" OR "disability employment Ghana" OR "aquaculture"',
+        '"agribusiness Ghana" OR "agro processing Ghana" OR "tourism Ghana"',
+        '"24-hour economy" OR "digital economy Ghana" OR "entrepreneurship Ghana"',
+        '"cedi depreciation" OR "oil shortage Ghana" OR "election Ghana"',
+    ],
+    "Kenya": [
+        '"urbanization Kenya" OR "arid Kenya" OR "semi-arid Kenya" OR "young women Kenya"',
+        '"agriculture Kenya" OR "digital economy Kenya" OR "manufacturing Kenya"',
+        '"MSME Kenya" OR "workforce development Kenya" OR "entrepreneurship Kenya"',
+        '"emigration Kenya" OR "domestic work abroad" OR "oil shortage Kenya"',
+        '"service jobs Kenya" OR "high growth sectors Kenya" OR "2024 Kenya economy"',
+    ],
+    "Nigeria": [
+        '"rural employment Nigeria" OR "urban employment Nigeria" OR "ultra poor Nigeria"',
+        '"women employment Nigeria" OR "disability employment Nigeria"',
+        '"agriculture Nigeria" OR "farming Nigeria" OR "agribusiness Nigeria"',
+        '"green economy Nigeria" OR "climate jobs Nigeria" OR "digital economy Nigeria"',
+        '"access to finance Nigeria" OR "trade Nigeria" OR "oil shortage Nigeria"',
+        '"entrepreneurship Nigeria" OR "climate Nigeria"',
+    ],
+    "Uganda": [
+        '"refugees Uganda" OR "host community Uganda" OR "RDP Uganda"',
+        '"rural employment Uganda" OR "urban employment Uganda" OR "ultra poor Uganda"',
+        '"agriculture Uganda" OR "climate Uganda" OR "tourism Uganda" OR "digital economy Uganda"',
+        '"access to finance Uganda" OR "entrepreneurship Uganda" OR "MSMEs Uganda"',
+        '"emigration Uganda" OR "domestic work abroad Uganda" OR "oil shortage Uganda"',
+        '"informal sector Uganda" OR "new policies Uganda"',
+    ],
+    # Senegal keywords applied to Senegal only (Senegal is under PRESENCE, not WAEMU list)
+    "Senegal": [
+        '"rural agriculture Senegal" OR "water Senegal" OR "climate resilience Senegal"',
+        '"urban skills Senegal" OR "digital access Senegal" OR "youth employment Senegal"',
+        '"young women Senegal" OR "rural farmers Senegal" OR "refugees Senegal"',
+        '"agrifood Senegal" OR "transport jobs Senegal" OR "professional services Senegal"',
+        '"digital economy Senegal" OR "ICT Senegal" OR "tourism Senegal"',
+        '"access to finance Senegal" OR "MSME Senegal" OR "TVET Senegal"',
+        '"political instability Senegal" OR "displacement Senegal" OR "oil shortage Senegal"',
+    ],
+    # WAEMU keywords applied to all 7 WAEMU members + the "WAEMU" regional query
+    "WAEMU": [
+        '"rural agriculture WAEMU" OR "water WAEMU" OR "climate resilience WAEMU"',
+        '"urban skills WAEMU" OR "digital access WAEMU" OR "youth employment WAEMU"',
+        '"young women WAEMU" OR "rural farmers WAEMU" OR "refugees WAEMU"',
+        '"agrifood WAEMU" OR "digital economy WAEMU" OR "tourism WAEMU"',
+        '"access to finance WAEMU" OR "MSME WAEMU" OR "TVET WAEMU"',
+        '"political instability WAEMU" OR "terrorism WAEMU" OR "oil shortage WAEMU"',
+    ],
+}
 
-MAX_ARTICLES_PER_CAT = 5   # per keyword string per category
-MAX_PARAGRAPHS       = 3
-DELAY                = 0.8
-TIMEOUT              = 12
-TODAY                = datetime.utcnow()
-DATE_FROM            = (TODAY - timedelta(days=7)).strftime("%Y-%m-%d")
+# WAEMU members that inherit the WAEMU keywords (applied individually per member)
+WAEMU_INTEREST_MEMBERS = [
+    "Benin", "Burkina Faso", "Côte d'Ivoire", "Guinea-Bissau",
+    "Mali", "Niger", "Togo",
+]
+
+
+def get_country_interests(entity):
+    """
+    Return the list of keyword strings for an entity's Country-Specific Context category.
+    WAEMU member states use the WAEMU keywords substituted with their own name.
+    Returns empty list if no QRM interests are defined for this entity.
+    """
+    if entity in COUNTRY_INTERESTS:                      # direct match — Ethiopia, Rwanda, Ghana etc
+        return COUNTRY_INTERESTS[entity]
+    if entity in WAEMU_INTEREST_MEMBERS:                 # WAEMU member — substitute entity name into WAEMU keywords
+        return [
+            kw.replace("WAEMU", entity)                  # replace "WAEMU" placeholder with actual country name
+            for kw in COUNTRY_INTERESTS["WAEMU"]
+        ]
+    return []                                            # no QRM interests for this entity — skip the category
+
+DEMOGRAPHICS = ["youth", "women", "disabilit", "refugee"]   # substrings matched in article titles; "disabilit" catches disability/disabilities
+DEMO_LABELS  = {"youth": "youth", "women": "women", "disabilit": "disabilities", "refugee": "refugees"}   # display labels for each demographic key
+DEMO_COLOURS = {"youth": "#1a6fbf", "women": "#9b2e8a", "disabilit": "#2e8a4a", "refugee": "#bf6a1a"}   # badge colours in the HTML output
+
+TEST_MODE = False  # set True to run only TEST_ENTITIES — useful for quick local testing
+TEST_ENTITIES = COUNTRIES[:3] + ["Africa"]   # 3 countries + Africa regional when TEST_MODE is True
+
+MAX_ARTICLES_PER_CAT = 5   # maximum articles collected per keyword string per category
+MAX_PARAGRAPHS       = 3      # maximum paragraphs extracted from each article page
+DELAY                = 0.8    # seconds between article fetches — keeps requests at human speed
+TIMEOUT              = 12     # seconds before giving up on a single HTTP request
+TODAY                = datetime.utcnow()                              # exact run time including hours and minutes
+DATE_FROM            = (TODAY - timedelta(days=7)).strftime("%Y-%m-%d")  # one week ago for RSS date filter
+TIME_SLUG            = TODAY.strftime("%Y-%m-%d-%H%M")                   # e.g. 2026-05-25-0142 — unique per run including same-day re-runs
 
 HEADERS = {
     "User-Agent": (
@@ -393,7 +491,15 @@ def process_entity(entity):
     entity_result = {"entity": entity, "categories": {}}
     seen_titles   = set()
 
-    for cat_name, keyword_list in CATEGORIES.items():
+    # Run standard 6-pillar categories for every entity
+    all_categories = dict(CATEGORIES)                        # start with the standard 6 pillars
+
+    # Append Country-Specific Context if QRM keywords are defined for this entity
+    country_kws = get_country_interests(entity)              # empty list if entity has no QRM data
+    if country_kws:                                          # only add the category if there are keywords
+        all_categories["Country-Specific Context"] = country_kws   # adds as a 7th category for this entity only
+
+    for cat_name, keyword_list in all_categories.items():   # loop through all categories
         cat_articles = []
 
         for kw in keyword_list:
@@ -496,7 +602,7 @@ with open(RESULTS_PATH, "wb") as f:
         "results":   results,    # complete list of entity result dicts
         "generated": generated,  # timestamp string for display
         "today":     TODAY,      # datetime object for date formatting
-        "date_slug": TODAY.strftime("%Y-%m-%d"),   # YYYY-MM-DD for filenames
+        "date_slug": TIME_SLUG,                    # YYYY-MM-DD-HHMM — unique per run, prevents same-day overwrite
         "total_a":   total_a,    # total article count across all entities
         "total_t":   total_t,    # articles where text was successfully extracted
     }, f)
