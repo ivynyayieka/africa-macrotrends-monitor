@@ -6,14 +6,14 @@
 name: Weekly Africa Digest   # display name shown in the GitHub Actions tab
 
 on:                           # defines when this workflow runs
-  schedule:
-    - cron: '0 6 * * 1'      # run at 06:00 UTC every Monday (cron format: minute hour day month weekday)
+  schedule:                     # time-based triggers
+    - cron: '0 1 * * 1'      # run at 01:00 UTC every Monday — digest ready before start of business
   workflow_dispatch:          # also allows manual trigger from the Actions tab in GitHub
 
 jobs:
-  build:                      # name of the job (can be anything)
+  build:                      # single job containing all steps
     runs-on: ubuntu-latest    # use GitHub's Ubuntu Linux runner (free tier)
-    timeout-minutes: 600      # cancel the job if it runs longer than 2 hours (search takes ~60 min for 58 entities)
+    timeout-minutes: 360      # allow up to 6 hours — full run takes ~2.5 hours for 58 entities
 
     steps:                    # ordered list of tasks the job performs
 
@@ -22,7 +22,7 @@ jobs:
 
       - name: Set up Python 3.11              # step 2: install Python on the runner
         uses: actions/setup-python@v5         # official GitHub action for Python setup
-        with:
+        with:                               # parameters passed to the setup-python action
           python-version: '3.11'              # use Python 3.11 (matches local development environment)
 
       - name: Install dependencies            # step 3: install the Python libraries the scripts need
@@ -36,12 +36,11 @@ jobs:
         run: python production_export.py      # produces news-digest-YYYY-MM-DD.html, index.html, and CSV
 
       - name: Commit and push outputs         # step 6: save the generated files back to the repo
-        run: |
+        run: |                              # multi-line shell script
           git config user.name  "github-actions[bot]"              # set git author name for the commit
           git config user.email "github-actions[bot]@users.noreply.github.com"   # set git author email
-          git add index.html "news-digest-$(date -u +'%Y-%m-%d').html" "africa-digest-$(date -u +'%Y-%m-%d').csv" || true
-          # ^ stage the three output files; || true prevents failure if files don't exist
-          # $(date -u +'%Y-%m-%d') inserts today's date in YYYY-MM-DD format
-          git commit -m "Weekly digest $(date -u +'%Y-%m-%d')" || echo "Nothing to commit"
-          # ^ commit with a dated message; if nothing changed, print a message instead of failing
+          git add index.html news-digest-*.html africa-digest-*.csv checkpoint.pkl || true   # wildcards catch time-stamped filenames; || true prevents failure if no new files
+          # ^ stage all output files using wildcards — handles time-stamped filenames like news-digest-2026-05-25-0142.html
+          # checkpoint.pkl is included in case the run was interrupted and needs to resume
+          git commit -m "Weekly digest $(date -u +'%Y-%m-%d-%H%M')" || echo "Nothing to commit"   # time in message distinguishes same-day re-runs
           git push                            # push the commit to the main branch, triggering GitHub Pages to update
