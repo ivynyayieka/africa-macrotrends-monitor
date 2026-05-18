@@ -61,7 +61,19 @@ WAEMU_MEMBERS = [
 ]
 
 # Regional bloc queries to show in the Regional section
-REGIONAL_SHOW = ["WAEMU", "Africa"]
+REGIONAL_SHOW = ["WAEMU", "Africa"]   # regional bloc queries shown in the Regional section
+
+# Order pillars appear under each country in the production report
+# Country-Specific Context always last — only shown when QRM keywords produced results
+PILLAR_ORDER = [
+    "Jobs & Employment",              # core employment signals — always first
+    "Macroeconomy",                   # economic conditions and regional integration
+    "Digital Economy",                # digital access, ICT, fintech, AI
+    "Governance",                     # political signals, elections, civil society
+    "Agrifood & Climate",             # food security, agriculture, climate
+    "Workforce & Human Capital",      # education, skills, migration, health
+    "Country-Specific Context",       # QRM-driven keywords — only appears where defined
+]
 
 # ── Publisher reach scores ────────────────────────────────────────────────────
 # Used to rank articles by estimated audience size.
