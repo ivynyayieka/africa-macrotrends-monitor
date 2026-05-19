@@ -39,7 +39,7 @@ jobs:
         run: |                              # multi-line shell script
           git config user.name  "github-actions[bot]"              # set git author name for the commit
           git config user.email "github-actions[bot]@users.noreply.github.com"   # set git author email
-          git add index.html news-digest-*.html africa-digest-*.csv checkpoint.pkl || true   # wildcards catch time-stamped filenames; || true prevents failure if no new files
+          git add -A   # stage all new and modified files — most reliable way to catch time-stamped filenames   # wildcards catch time-stamped filenames; || true prevents failure if no new files
           # ^ stage all output files using wildcards — handles time-stamped filenames like news-digest-2026-05-25-0142.html
           # checkpoint.pkl is included in case the run was interrupted and needs to resume
           git commit -m "Weekly digest $(date -u +'%Y-%m-%d-%H%M')" || echo "Nothing to commit"   # time in message distinguishes same-day re-runs
