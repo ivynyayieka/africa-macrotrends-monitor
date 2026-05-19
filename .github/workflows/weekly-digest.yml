@@ -18,10 +18,10 @@ jobs:
     steps:                    # ordered list of tasks the job performs
 
       - name: Checkout repo                    # step 1: download the repo files onto the runner
-        uses: actions/checkout@v4              # official GitHub action for checking out code
+        uses: actions/checkout@v5              # updated to Node.js 24 compatible version
 
       - name: Set up Python 3.11              # step 2: install Python on the runner
-        uses: actions/setup-python@v5         # official GitHub action for Python setup
+        uses: actions/setup-python@v6         # updated to Node.js 24 compatible version
         with:                               # parameters passed to the setup-python action
           python-version: '3.11'              # use Python 3.11 (matches local development environment)
 
