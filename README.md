@@ -12,12 +12,12 @@ Each Monday at 06:00 UTC the pipeline runs automatically:
 
 1. Searches Google News RSS for 58 African countries + regional blocs (Africa, Sahel, WAEMU, West African Economic and Monetary Union)
 2. For each entity, runs searches across **6 analytical pillars** drawn from the Guiding Questions framework:
-   - 💼 Jobs & Employment
-   - 📊 Macroeconomy
-   - 🌐 Digital Economy
-   - 🏛 Governance
-   - 🌱 Agrifood & Climate
-   - 🎓 Workforce & Human Capital
+   - Jobs & Employment
+   - Macroeconomy
+   - Digital Economy
+   - Governance
+   - Agrifood & Climate
+   - Workforce & Human Capital
 3. Attempts to extract verbatim article text directly from publisher pages
 4. Highlights articles mentioning **youth, women, people with disabilities, and refugees**
 5. Publishes a production report filtered to Countries of Presence, WAEMU members, and regional blocs
