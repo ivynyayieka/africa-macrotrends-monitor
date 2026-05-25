@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends — Monday 25 May 2026</title>
+<style>
+/* Reset: remove browser default margin/padding; use border-box sizing */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Design tokens — change these to restyle the whole report */
+:root {
+  --paper:      #f5f2eb;   /* warm cream background — aged newsprint feel */
+  --ink:        #1a1a18;   /* near-black body text */
+  --ink-2:      #3d3d38;   /* slightly lighter for excerpts */
+  --ink-3:      #7a7a72;   /* grey for captions and metadata */
+  --rule:       #ccc9be;   /* warm grey for light borders */
+  --rule-heavy: #1a1a18;   /* near-black for masthead double-rule */
+  --accent:     #1c3d5c;   /* deep ink-blue for headings and links */
+  --serif:      "Georgia", "Times New Roman", serif;
+  --sans:       "Helvetica Neue", "Arial", sans-serif;
+  --sidebar-w:  180px;     /* width of the left navigation sidebar */
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }   /* smooth anchor scrolling */
+body { font-family: var(--serif); background: var(--paper); color: var(--ink); line-height: 1.7; }
+
+/* Masthead — newspaper broadsheet header style */
+.masthead {
+  border-bottom: 3px double var(--rule-heavy);   /* double rule like a broadsheet newspaper */
+  padding: 36px 24px 20px;
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.masthead-eyebrow {                             /* small uppercase label above the title */
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.masthead h1 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 46px);   /* responsive — large on desktop, readable on mobile */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.masthead-dateline {                            /* date line with thin rules above and below */
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 7px 0;
+  margin-top: 14px;
+}
+
+/* Page body layout: sidebar on left, content on right */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;                /* side-by-side on desktop */
+  align-items: flex-start;
+  padding: 0 0 80px;
+}
+
+/* Left sidebar navigation */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;               /* sidebar never shrinks — content column takes remaining space */
+  border-right: 1px solid var(--rule);
+  position: sticky;             /* sidebar stays visible while content scrolls */
+  top: 0;
+  max-height: 100vh;            /* never taller than the viewport */
+  overflow-y: auto;             /* scrollable if the country list exceeds the viewport height */
+  padding: 28px 0;
+}
+.sidebar-inner { padding: 0 16px; }
+.nav-section-label {            /* section heading inside sidebar e.g. "Countries of Presence" */
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 5px;
+  margin: 20px 0 8px;
+}
+.nav-section-label:first-child { margin-top: 0; }   /* no top margin for first label */
+.nav-link {                     /* individual country/region link in sidebar */
+  display: block;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 0;
+  line-height: 1.4;
+}
+.nav-link:hover { text-decoration: underline; }
+
+/* Main content area */
+.content {
+  flex: 1;          /* takes all remaining horizontal space after sidebar */
+  min-width: 0;     /* prevents flex overflow on narrow screens */
+  padding: 28px 32px;
+}
+
+/* Geographic section — one per grouping (Presence, WAEMU, Regional) */
+.geo-section { margin-bottom: 60px; }
+.section-rule {                 /* ruled divider with section label centred in it */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  margin-top: 52px;
+}
+.geo-section:first-child .section-rule { margin-top: 0; }   /* no top margin for first section */
+.section-rule::before {         /* short thick bar to the left of the label */
+  content: '';
+  flex: 0 0 32px;
+  height: 3px;
+  background: var(--rule-heavy);
+}
+.section-rule::after {          /* long thin rule to the right of the label */
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.section-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;           /* label never wraps onto two lines */
+}
+
+/* Entity block — one per country or region */
+.entity-block { margin-bottom: 44px; }
+.entity-hed {                   /* country/region heading with underline rule */
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
+}
+
+/* Article card — plain ruled separator, no border-box or background */
+.card {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);   /* simple rule between articles */
+}
+.card:last-child {              /* no rule or padding after the last card */
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.card-hed {                     /* article headline */
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+.card-hed a {                   /* headline link — dark ink, underlines on hover */
+  color: var(--ink);
+  text-decoration: none;
+}
+.card-hed a:hover { color: var(--accent); text-decoration: underline; }
+.card-meta {                    /* source · date line */
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+}
+.excerpt {                      /* verbatim article text */
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.excerpt p { margin-bottom: 8px; }
+.excerpt p:last-child { margin: 0; }
+.read-link {                    /* 'Read article' hyperlink shown when no text is available */
+  font-family: var(--sans);
+  font-size: 12px;
+  margin-top: 6px;
+}
+.read-link a { color: var(--accent); text-decoration: underline; }
+
+/* Tag badges — outlined text labels, no filled backgrounds, no emoji */
+.tags { margin-bottom: 8px; }
+.tag {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid currentColor;   /* border colour set inline via style attribute */
+  border-radius: 2px;
+  margin-right: 5px;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  border-top: 3px double var(--rule);   /* double rule mirrors the masthead */
+  padding: 32px 24px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.footer strong { color: var(--ink-2); }
+
+/* Mobile: collapse sidebar to a horizontal list at the top */
+@media (max-width: 700px) {
+  .page-wrap { flex-direction: column; }   /* stack sidebar above content */
+  .sidebar {
+    width: 100%;
+    position: static;             /* no longer sticky on mobile */
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+    overflow-y: visible;
+  }
+  .sidebar-inner {               /* lay links out horizontally on mobile */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 0 16px;
+  }
+  .nav-section-label { width: 100%; margin: 10px 0 4px; }   /* full-width labels on mobile */
+  .content { padding: 20px 16px; }
+}
+
+.empty { font-family: var(--sans); font-size: 13px; color: var(--ink-3); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- Newspaper-style masthead with title, kicker, and dateline -->
+<header class="masthead">
+  <p class="masthead-eyebrow">Weekly News Roundup</p>
+  <h1>Africa Youth Employment<br>&amp; Macrotrends</h1>
+  <p class="masthead-dateline">Monday 25 May 2026</p>
+</header>
+
+<!-- Page body: sticky sidebar on left, scrolling content on right -->
+<div class="page-wrap">
+
+  <!-- Left sidebar: full index of all countries and regions with anchor links -->
+  <nav class="sidebar">
+<div class="sidebar-inner">
+<p class="nav-section-label">Countries of Presence</p>
+<a class="nav-link" href="#Ethiopia">Ethiopia</a>
+<a class="nav-link" href="#Ghana">Ghana</a>
+<a class="nav-link" href="#Kenya">Kenya</a>
+<a class="nav-link" href="#Nigeria">Nigeria</a>
+<a class="nav-link" href="#Rwanda">Rwanda</a>
+<a class="nav-link" href="#Senegal">Senegal</a>
+<a class="nav-link" href="#Uganda">Uganda</a>
+<p class="nav-section-label">WAEMU</p>
+<a class="nav-link" href="#Benin">Benin</a>
+<a class="nav-link" href="#Burkina_Faso">Burkina Faso</a>
+<a class="nav-link" href="#Côte_d_Ivoire">Côte d'Ivoire</a>
+<a class="nav-link" href="#Guinea_Bissau">Guinea-Bissau</a>
+<a class="nav-link" href="#Mali">Mali</a>
+<a class="nav-link" href="#Niger">Niger</a>
+<a class="nav-link" href="#Togo">Togo</a>
+<p class="nav-section-label">Regional</p>
+<a class="nav-link" href="#WAEMU">WAEMU</a>
+<a class="nav-link" href="#Africa">Africa</a>
+</div>
+</nav>
+
+
+  <!-- Main content: Countries of Presence → WAEMU → Regional in one continuous scroll -->
+  <main class="content">
+    <section class="geo-section" id="presence">
+<div class="section-rule"><span class="section-label">Countries of Presence</span></div>
+<div class="entity-block" id="Ethiopia">
+<h3 class="entity-hed">Ethiopia</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/419136/egypts-proxy-campaign-against-ethiopia-in-the-horn-risks-regional-meltdown/" target="_blank" rel="noopener">Egypt’s proxy campaign against Ethiopia in the Horn risks regional meltdown</a></h4>
+<p class="card-meta">The Africa Report · 20 May 2026</p>
+<div class="excerpt"><p>Tensions in the Horn of Africa are rising rapidly. Sudan and Ethiopia are trading accusations. The Pretoria agreement , which ended the devastating civil war in northern Ethiopia, is being tested by the TPLF’s decision to form a rogue regional government in direct violation of the permanent cessation of hostilities agreement.</p><p>At the same time, the TPLF is openly aligning with the Eritrean government as it prepares for another round of conflict with the federal authorities.</p><p>The entire north-eastern Horn now stands at a tipping point. A regional conflagration involving Sudan, Ethiopia and Eritrea is no longer unthinkable – it is increasingly a distinct possibility.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.africanews.com/2026/05/24/ethiopia-heads-for-one-of-least-competitive-elections/" target="_blank" rel="noopener">Ethiopia heads for one of 'least competitive' elections</a></h4>
+<p class="card-meta">africanews.com · 24 May 2026</p>
+<div class="excerpt"><p>Ethiopia holds a general election on June 1, with Prime Minister Abiy Ahmed all but guaranteed of victory despite multiple armed conflicts and the economic impact of the Middle East war.</p><p>Abiy has been in power since 2018 and his Prosperity Party (PP) won a landslide -- 485 of the 502 contested seats -- at the last general election in 2021.</p><p>That ballot was partially disrupted by the devastating civil war between the central government and the leaders of the Tigray region that claimed an estimated 600,000 lives.</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.ft.com/content/273aee17-25ee-4608-9be2-88433e28270e" target="_blank" rel="noopener">Protests spread in Africa as fuel crisis deepens</a></h4>
+<p class="card-meta">Financial Times · 20 May 2026</p>
+<div class="excerpt"><p>Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial.</p><p>Essential digital access to quality FT journalism on any device. Pay a year upfront and save 20%.</p><p>Complete digital access to quality FT journalism with expert analysis from industry leaders. Pay a year upfront and save 20%.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Ghana">
+<h3 class="entity-hed">Ghana</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7779389947859/how-bank-of-ghanas-monetary-framework-is-slowing-inflation-" target="_blank" rel="noopener">How Bank of Ghana's monetary framework is slowing inflation</a></h4>
+<p class="card-meta">CNBC Africa · 21 May 2026</p>
+<div class="excerpt"><p>The Bank of Ghana’s 2025 financial results are reigniting debate over the cost of monetary stabilization, after the central bank disclosed a sterilization bill of roughly 16.7 billion cedis tied to efforts to absorb excess liquidity from the financial system.</p><p>But according to financial markets expert Norman Adu Bamfo, that large bill should not be viewed only as a red flag. Instead, he argues, it reflects a monetary framework that has been effective in bringing inflation down, supporting the cedi and restoring broader macroeconomic stability — even if the financial burden of maintaining that framework is becoming increasingly structural.</p><p>Speaking in a television interview, Bamfo said the Bank of Ghana’s latest results must be read alongside the macroeconomic progress Ghana has recorded over the past year. He pointed to a decline in inflation from 23.8% in December 2024 to 13.4% by December 2025, a 14.7% appreciation of the cedi against the U.S. dollar, and a sharp increase in gross international reserves from $9.11 billion, equivalent to four months of import cover, to $13.83 billion, or 5.7 months of import cover.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/fintech/ghana-s-evacuation-from-south-africa-highlights-fintech-unity-test" target="_blank" rel="noopener">Ghana's evacuation from South Africa highlights fintech unity test</a></h4>
+<p class="card-meta">Connecting Africa · 21 May 2026</p>
+<div class="excerpt"><p>Ghana's minister of foreign affairs and regional integration, Samuel Okudzeto Ablakwa, said on Monday on X that the nation was set to evacuate 300 citizens from South Africa on Thursday, amid reports of attacks on foreign nationals, including Nigerians, over claims of job losses and economic strain.</p><p>On the day of the evacuation, Ablakwa said the plans had been postponed with no new date announced after about 800 people registered for departure .</p><p>The move to evacuate comes after Okudzeto Ablakwa spoke out against the xenophobia at the fintech-focused 3i Africa Summit in early May, saying Africa cannot speak about trade and integration while failing to welcome and support one another.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/419640/ghanas-imf-policy-coordination-instrument-tests-the-mahama-governments-discipline/" target="_blank" rel="noopener">Ghana’s IMF policy coordination instrument tests the Mahama government’s discipline</a></h4>
+<p class="card-meta">The Africa Report · 22 May 2026</p>
+<div class="excerpt"><p>When the International Monetary Fund approved Ghana’s $3bn bailout programme in 2023, the country was reeling from one of the worst economic crises in its modern history. Inflation had surged above 50%, the cedi was in free fall, debt repayments were unsustainable and the government had defaulted on much of its external debt for the first time in decades.</p><p>Three years later, the picture looks markedly different.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Kenya">
+<h3 class="entity-hed">Kenya</h3>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxPZm45ellnblgtX3I5SXdWVlBtemNhYktKVjRTRzhUWG1QV1RMbGgzd2swME1vWUdJT0JNblJsZlVna05fS0ZldV94V2JmRVNGZy1qWnVUTlBwN1dLeVVLRnluZnF1RzlwTVRaVW1wV3ZpcjJwZ3psazFGRHJONWx4dXIzLUF0NUd0MUdDNzkwMVNfYnpQaUgxRmllMTZRU3ZaM0JxbHVDcFRWbXdaX3U2VE9id1FzZw?oc=5" target="_blank" rel="noopener">Kenyan public transport operators call off strike after government cuts diesel price</a></h4>
+<p class="card-meta">Reuters · 22 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxPZm45ellnblgtX3I5SXdWVlBtemNhYktKVjRTRzhUWG1QV1RMbGgzd2swME1vWUdJT0JNblJsZlVna05fS0ZldV94V2JmRVNGZy1qWnVUTlBwN1dLeVVLRnluZnF1RzlwTVRaVW1wV3ZpcjJwZ3psazFGRHJONWx4dXIzLUF0NUd0MUdDNzkwMVNfYnpQaUgxRmllMTZRU3ZaM0JxbHVDcFRWbXdaX3U2VE9id1FzZw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/clyp6831yp5o" target="_blank" rel="noopener">Kenya's matatu strikes leave four dead and transport paralysed</a></h4>
+<p class="card-meta">BBC · 18 May 2026</p>
+<div class="excerpt"><p>Russia carried out a deadly large-scale wave of strikes against Ukraine, firing hundreds of drones and dozens of missiles on Saturday night.</p><p>Ukrainian President Volodymyr Zelensky said Kyiv was the main target, but other areas were also hit, with about 100 people injured.</p><p>Four people were killed in the capital and wider region, with explosions heard throughout the night. Dozens of residential buildings, a school, an opera house and a museum were damaged.</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://apnews.com/article/kenya-fuel-prices-protests-0195168fd0507d2b4800acbe43feb5a6" target="_blank" rel="noopener">4 people killed and dozens injured in Kenya protests over record fuel prices</a></h4>
+<p class="card-meta">AP News · 18 May 2026</p>
+<div class="excerpt"><p>NAIROBI, Kenya (AP) — Four people died and over 30 others were injured when police clashed with protesters in Kenya’s capital on Monday as a nationwide public transport strike kicked off to protest record fuel prices .</p><p>Interior Minister Kipchumba Murkomen also said 348 people were arrested and would be charged over their involvement in what he called violent illegal protests. He did not say how the four people were killed, but witnesses told local media that police in Nairobi had opened fire.</p><p>Commuters were stranded in many suburbs and the city center was deserted as protesters burned tires on major roads and attacked motorists, setting at least two vehicles on fire.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Nigeria">
+<h3 class="entity-hed">Nigeria</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxNcVJ1TlFBbUFTelBYNTJuV0NqaGpaOGthcWRVV2lhLTJ6N0ptekdXLU56SGxZRG80SFcxc3hJNHowQkRzdmR1dGZJdFNKNzdqaVY0MF9oMXJuZ2FGTkI2VWZzNlVHTTNaR21pVWVVOFFpQ3czaEVJUWZLa2FVbTRDWDNPRlktRF9rTU1tVkhJSXVCbkJQSnlObUdJVFpWZnFPeWpFdWJkVzUwWHpXLUE?oc=5" target="_blank" rel="noopener">Nigeria's key rate held as central bank thinks inflation rise is transitory</a></h4>
+<p class="card-meta">Reuters · 20 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxNcVJ1TlFBbUFTelBYNTJuV0NqaGpaOGthcWRVV2lhLTJ6N0ptekdXLU56SGxZRG80SFcxc3hJNHowQkRzdmR1dGZJdFNKNzdqaVY0MF9oMXJuZ2FGTkI2VWZzNlVHTTNaR21pVWVVOFFpQ3czaEVJUWZLa2FVbTRDWDNPRlktRF9rTU1tVkhJSXVCbkJQSnlObUdJVFpWZnFPeWpFdWJkVzUwWHpXLUE?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxOVElZLS0zOUJ3YUZCdEN0ZFBoRjBvOUJaMERETF9HNWtJR3ItSE5rbGk3TWxPekI0NkNtczVCdHQ1dC1IbXNmTVBfRDA4YWN5UFVqb25wcXBaa1o4OHRsQVh1amM1c1ZmVS05dHFXa0xJWm5HcWRjQXVWMklkamtjMGJUUy1yS3FjR1NiSVBnbmJyX1VYcElpVU9oN0JVeFU1SjAwV25BWkFwYUFvc3pLVQ?oc=5" target="_blank" rel="noopener">Nigeria Holds Key Rate as Iran War Drives Fuel Prices Higher</a></h4>
+<p class="card-meta">Bloomberg.com · 20 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxOVElZLS0zOUJ3YUZCdEN0ZFBoRjBvOUJaMERETF9HNWtJR3ItSE5rbGk3TWxPekI0NkNtczVCdHQ1dC1IbXNmTVBfRDA4YWN5UFVqb25wcXBaa1o4OHRsQVh1amM1c1ZmVS05dHFXa0xJWm5HcWRjQXVWMklkamtjMGJUUy1yS3FjR1NiSVBnbmJyX1VYcElpVU9oN0JVeFU1SjAwV25BWkFwYUFvc3pLVQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiXEFVX3lxTE5QS3ZJQXB3ZVY3bV83NVdmV3BweWNtaTh5TU1EY3hHckpCbERPTE04b3ZmUFI2T1ZLQ093RGlmVUtfVE9Wd3A5ejBlTjZzdWpnWFYwUThVSVhTbUNX0gFiQVVfeXFMTlJaTWlOS25xaWFyWkhKXzBHZGNjc0dLY3JVLVd3OVE4dERTX3UwTU5sYmk0SnBkNnZhVVAxaXE4NUg2cjNWTmlNbTZWNG9YeU1FNmxETUZ5UFBWaml3XzgyMHc?oc=5" target="_blank" rel="noopener">APC presidential primaries results: Tinubu receive Certificate of Return afta e win APC presidential primary</a></h4>
+<p class="card-meta">BBC · 24 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiXEFVX3lxTE5QS3ZJQXB3ZVY3bV83NVdmV3BweWNtaTh5TU1EY3hHckpCbERPTE04b3ZmUFI2T1ZLQ093RGlmVUtfVE9Wd3A5ejBlTjZzdWpnWFYwUThVSVhTbUNX0gFiQVVfeXFMTlJaTWlOS25xaWFyWkhKXzBHZGNjc0dLY3JVLVd3OVE4dERTX3UwTU5sYmk0SnBkNnZhVVAxaXE4NUg2cjNWTmlNbTZWNG9YeU1FNmxETUZ5UFBWaml3XzgyMHc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Rwanda">
+<h3 class="entity-hed">Rwanda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/05/22/rwanda-advances-digital-inclusion-with-completion-of-koica-funded-ict-project/" target="_blank" rel="noopener">Rwanda Advances Digital Inclusion with Completion of KOICA-Funded ICT Project</a></h4>
+<p class="card-meta">TechAfrica News · 22 May 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/05/22/rwanda-advances-digital-inclusion-with-completion-of-koica-funded-ict-project/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7779292458941/scaling-fintech-across-africa-" target="_blank" rel="noopener">Scaling fintech across Africa</a></h4>
+<p class="card-meta">CNBC Africa · 20 May 2026</p>
+<div class="excerpt"><p>KIGALI, Rwanda — As business leaders gathered at the Africa CEO Forum to press for deeper regional integration and stronger private sector-led growth, Wave Mobile Money said its own expansion across the continent is underscoring a central reality for fintechs in Africa: scaling is not just about customer acquisition, but about navigating fragmented regulation, identifying unmet demand and building sustainable operations market by market.</p><p>Speaking in an interview at the forum, Kura Karine Sene, regional director at Wave Mobile Money Group, said the company’s early decision to launch in West Africa was shaped by a desire to expand rapidly within a more harmonized regulatory environment.</p><p>Wave began in Senegal and used the West African Economic and Monetary Union framework as a springboard. The region’s shared central bank and broadly aligned rules across eight countries gave the company a structural advantage that many fintechs operating across Africa’s patchwork of jurisdictions do not enjoy.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.ft.com/content/273aee17-25ee-4608-9be2-88433e28270e" target="_blank" rel="noopener">Protests spread in Africa as fuel crisis deepens</a></h4>
+<p class="card-meta">Financial Times · 20 May 2026</p>
+<div class="excerpt"><p>Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial.</p><p>Essential digital access to quality FT journalism on any device. Pay a year upfront and save 20%.</p><p>Complete digital access to quality FT journalism with expert analysis from industry leaders. Pay a year upfront and save 20%.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Senegal">
+<h3 class="entity-hed">Senegal</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/2026/senegal-fuel-subsidy-costs-could-exceed-budget-by-2-billion-finance-minister-says" target="_blank" rel="noopener">Senegal fuel subsidy could exceed budget allocation by $2 billion, minister says</a></h4>
+<p class="card-meta">CNBC Africa · 22 May 2026</p>
+<div class="excerpt"><p>DAKAR, May 22 (Reuters) – Senegal’s fuel subsidy bill could exceed its 2026 budget allocation by as much as 1.15 trillion CFA francs ($2 billion) if oil prices rise to $115 per barrel, Finance Minister Cheikh Diba said on Friday.</p><p>Senegal’s $40 billion economy has been in turmoil since 2024, when the new government disclosed unreported debts, which are now estimated at up to $13 billion.</p><p>The IMF froze its financing and access to international bond markets evaporated, leaving Senegal dependent on regional markets and tax revenues.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7779292458941/scaling-fintech-across-africa-" target="_blank" rel="noopener">Scaling fintech across Africa</a></h4>
+<p class="card-meta">CNBC Africa · 20 May 2026</p>
+<div class="excerpt"><p>KIGALI, Rwanda — As business leaders gathered at the Africa CEO Forum to press for deeper regional integration and stronger private sector-led growth, Wave Mobile Money said its own expansion across the continent is underscoring a central reality for fintechs in Africa: scaling is not just about customer acquisition, but about navigating fragmented regulation, identifying unmet demand and building sustainable operations market by market.</p><p>Speaking in an interview at the forum, Kura Karine Sene, regional director at Wave Mobile Money Group, said the company’s early decision to launch in West Africa was shaped by a desire to expand rapidly within a more harmonized regulatory environment.</p><p>Wave began in Senegal and used the West African Economic and Monetary Union framework as a springboard. The region’s shared central bank and broadly aligned rules across eight countries gave the company a structural advantage that many fintechs operating across Africa’s patchwork of jurisdictions do not enjoy.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/c202jwpd24go" target="_blank" rel="noopener">Senegal President Faye sacks prime minister Sonko after months or tensions</a></h4>
+<p class="card-meta">BBC · 23 May 2026</p>
+<div class="excerpt"><p>Senegalese President Bassirou Diomaye Faye has sacked Prime Minister Ousmane Sonko and dissolved the nation's government after months of tensions between the two men.</p><p>A shock decree, read out on TV by a presidential aide, said Faye had &quot;ended the duties&quot; of his one-time political ally Sonko and &quot;consequently those of the ministers and secretaries of state who are members of the government&quot;.</p><p>Sonko, a popular figure among Senegal's youth, said on social media that he would &quot;sleep with a light heart&quot;.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Uganda">
+<h3 class="entity-hed">Uganda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxONmJGRFZ2eENZNnM4aFZ0ZGpyZUNjU2RKZHY3WTlvanowWVdxSFh6SFFuM3JNd1Bua0hraVRkNWhGSEIxdVotN29SelBvSmZfT0lfN3BsSU5ObjhoTTk5MndYejBlYW0wNUZOMjNnMWh2VW41MUF3UEFMN294bHFUS3ZYdFZKU0RX?oc=5" target="_blank" rel="noopener">Containing the Ebola Outbreak in Central Africa</a></h4>
+<p class="card-meta">Johns Hopkins Bloomberg School of Public Health · 22 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxONmJGRFZ2eENZNnM4aFZ0ZGpyZUNjU2RKZHY3WTlvanowWVdxSFh6SFFuM3JNd1Bua0hraVRkNWhGSEIxdVotN29SelBvSmZfT0lfN3BsSU5ObjhoTTk5MndYejBlYW0wNUZOMjNnMWh2VW41MUF3UEFMN294bHFUS3ZYdFZKU0RX?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Country-Specific Context</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNTFU0VThRT08wOWctY2VqeTNyRDBvQ0EwZVdDeU5wcUtiTUF4MmxtdDdiYnFuY1drbEd0M2x0YmxCdGFVYU9SRFdNRkZlQWlyWkUyVnFrTGVocFRZblVaZzYxVDFjTF9OVjJFUGxVM2loeWpHVVJKWU42a2tBNW5hYldCQjdhMFhwZWRyQ052R2hLT2traFpmdldVeFVCZF9INDRKZzctaWc?oc=5" target="_blank" rel="noopener">Uganda mission in Beijing showcases at Henan Cultural Tourism Expo</a></h4>
+<p class="card-meta">NewVision.co.ug · 21 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNTFU0VThRT08wOWctY2VqeTNyRDBvQ0EwZVdDeU5wcUtiTUF4MmxtdDdiYnFuY1drbEd0M2x0YmxCdGFVYU9SRFdNRkZlQWlyWkUyVnFrTGVocFRZblVaZzYxVDFjTF9OVjJFUGxVM2loeWpHVVJKWU42a2tBNW5hYldCQjdhMFhwZWRyQ052R2hLT2traFpmdldVeFVCZF9INDRKZzctaWc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNYVFKZE9HeHM0TE03c2xCTzNST0JyLXNaNXFGMTkyb20tYXJqOWM0TVdBa1ZVMVNhNFdPZTVDTVl2X0d2aFdFZ19KdGFoMGdzTGdJc3ZzSVlaTjI1cUlGWVZfcG91ZHlOS3NoSEEtX3FvYjBOUGQtdzZ4QWJfWDNGMkhCNVlRajhneXFPZEIzM1YwdFlKQURHWDRVOVJrWjJXejRuMk03b2g?oc=5" target="_blank" rel="noopener">Tourism: Uganda’s tourism potential excites Australian deleg</a></h4>
+<p class="card-meta">NewVision.co.ug · 20 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNYVFKZE9HeHM0TE03c2xCTzNST0JyLXNaNXFGMTkyb20tYXJqOWM0TVdBa1ZVMVNhNFdPZTVDTVl2X0d2aFdFZ19KdGFoMGdzTGdJc3ZzSVlaTjI1cUlGWVZfcG91ZHlOS3NoSEEtX3FvYjBOUGQtdzZ4QWJfWDNGMkhCNVlRajhneXFPZEIzM1YwdFlKQURHWDRVOVJrWjJXejRuMk03b2g?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="waemu">
+<div class="section-rule"><span class="section-label">WAEMU</span></div>
+<div class="entity-block" id="Benin">
+<h3 class="entity-hed">Benin</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#1a3a5c;color:#1a3a5c">Youth</span></div><h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7779462281649/ofodile-africa-must-rethink-how-it-defines-jobs-in-harnessing-youth-population" target="_blank" rel="noopener">Ofodile: Africa must rethink how it defines jobs in harnessing youth population</a></h4>
+<p class="card-meta">CNBC Africa · 22 May 2026</p>
+<div class="excerpt"><p>Africa needs to rethink what it considers a “good job” if it is to unlock the full economic potential of its rapidly growing youth population, according to MTN Benin CEO Uche Ofodile, who argued that future employment growth will increasingly come from sectors often overlooked in traditional policy and corporate thinking.</p><p>Speaking to CNBC Africa on the sidelines of the Africa Soft Power Summit in Nairobi, Ofodile said the continent’s employment challenge cannot be solved by focusing narrowly on conventional white-collar corporate roles. Instead, she called for a broader definition of work that recognizes the economic value of industries such as beauty, fashion, entertainment and other creative sectors, while also preparing young Africans for shifts driven by technology.</p><p>Her comments come at a time when Africa is widely seen as one of the world’s most important future sources of labor, entrepreneurship and consumption, with demographic projections pointing to a youthful population that could become a major competitive advantage if effectively trained and absorbed into productive sectors.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/05/20/u-s-pushes-trusted-telecom-infrastructure-in-west-africa-with-new-ustda-initiative/" target="_blank" rel="noopener">U.S. Pushes Trusted Telecom Infrastructure in West Africa With New USTDA Initiative</a></h4>
+<p class="card-meta">TechAfrica News · 20 May 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/05/20/u-s-pushes-trusted-telecom-infrastructure-in-west-africa-with-new-ustda-initiative/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Agrifood &amp; Climate</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/edo-disburses-funds-to-637-life-nd-agribusiness-beneficiaries/" target="_blank" rel="noopener">Edo Disburses Funds to 637 LIFE-ND Agribusiness Beneficiarie</a></h4>
+<p class="card-meta">Punch Newspapers · 23 May 2026</p>
+<div class="excerpt"><p>Edo State Governor, Monday Okpebholo, has said that his administration remains committed to transforming agriculture into a viable and sustainable pathway for wealth creation, food security, and youth development.</p><p>Okpebholo gave the assurance in Benin City at the flag-off ceremony for the disbursement of working capital and presentation of certificates to 637 beneficiaries of the Livelihood Improvement Family Enterprises in the Niger Delta project in Edo State.</p><p>The governor said he recognised that sustainable agricultural development was essential to addressing unemployment, poverty, food insecurity, and rural underdevelopment. He said his administration has continued to place agriculture and food security at the centre of its development agenda.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Burkina_Faso">
+<h3 class="entity-hed">Burkina Faso</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#1a3a5c;color:#1a3a5c">Youth</span></div><h4 class="card-hed"><a href="https://peacenews.com/jobs-before-guns-why-youth-employment-matters-for-peace-in-west-africa/" target="_blank" rel="noopener">Jobs Before Guns: Why Youth Employment Matters for Peace in West Africa</a></h4>
+<p class="card-meta">Peace News Network · 23 May 2026</p>
+<p class="read-link"><a href="https://peacenews.com/jobs-before-guns-why-youth-employment-matters-for-peace-in-west-africa/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMimwFBVV95cUxQT3BfT2g5dDV0WTBJZFVTNFpVRzlDOVRXSUFxSkJDVlduZ2dsRlUxSzVfdjNick9RNElRcDNiY1JRdG5YNnNxX2NlajdsTFpZbnNXd3RITUZfZEZ4MFdic0g2dG1IQWdDSW0wVHVCT3BkODk0cHpPU1FpTHNuR0h2b1NpbWdCZmszaTV0TkdUWENJWTBuUlFFMHJxVQ?oc=5" target="_blank" rel="noopener">Burkina Faso Tightens Control Over $7 Billion Gold Industry as Foreign Firms Lose Ground</a></h4>
+<p class="card-meta">The Voice of Africa · 24 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMimwFBVV95cUxQT3BfT2g5dDV0WTBJZFVTNFpVRzlDOVRXSUFxSkJDVlduZ2dsRlUxSzVfdjNick9RNElRcDNiY1JRdG5YNnNxX2NlajdsTFpZbnNXd3RITUZfZEZ4MFdic0g2dG1IQWdDSW0wVHVCT3BkODk0cHpPU1FpTHNuR0h2b1NpbWdCZmszaTV0TkdUWENJWTBuUlFFMHJxVQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/data-centers/burkina-faso-launches-two-mini-data-centers" target="_blank" rel="noopener">Burkina Faso launches two mini data centers</a></h4>
+<p class="card-meta">Connecting Africa · 26 Jan 2026</p>
+<div class="excerpt"><p>In a push to strengthen the country's digital infrastructure as well as enhance its data sovereignty, Burkina Faso's government has inaugurated two new mini data centers.</p><p>In a Facebook post , Burkina Faso's Ministry of Digital Transition, Posts and Electronic Communications said the data centers offer a combined storage capacity of around 3,000 terabytes, a tenfold increase from existing systems.</p><p>The data centers will be able to support more than 7,000 connected virtual machines, with each ministry able to host between 100 and 300 virtual servers for deploying its digital platforms.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Côte_d_Ivoire">
+<h3 class="entity-hed">Côte d'Ivoire</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#1a3a5c;color:#1a3a5c">Youth</span></div><h4 class="card-hed"><a href="https://peacenews.com/jobs-before-guns-why-youth-employment-matters-for-peace-in-west-africa/" target="_blank" rel="noopener">Jobs Before Guns: Why Youth Employment Matters for Peace in West Africa</a></h4>
+<p class="card-meta">Peace News Network · 23 May 2026</p>
+<p class="read-link"><a href="https://peacenews.com/jobs-before-guns-why-youth-employment-matters-for-peace-in-west-africa/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.kff.org/global-health-policy/the-u-s-presidents-emergency-plan-for-aids-relief-pepfar/" target="_blank" rel="noopener">The U.S. President’s Emergency Plan for AIDS Relief (PEPFAR)</a></h4>
+<p class="card-meta">KFF · 22 May 2026</p>
+<p class="read-link"><a href="https://www.kff.org/global-health-policy/the-u-s-presidents-emergency-plan-for-aids-relief-pepfar/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.unesco.org/en/articles/qa-what-you-need-know-about-how-education-can-help-build-more-just-societies" target="_blank" rel="noopener">Q&amp;A: What you need to know about how education can help build more just societies</a></h4>
+<p class="card-meta">UNESCO · 20 May 2026</p>
+<div class="excerpt"><p>The report, Education and justice: Learning to build just societies , argues that education has an essential role to play in responding to these challenges. It helps people understand their rights, navigate legal systems and participate in society. It can also reduce vulnerability to exploitation and violence, strengthen trust in institutions and support peaceful coexistence.</p><p>Laws alone do not deliver just societies. People do. And people can only claim the justice they know they are entitled to and know how to access. Education is how we close that gap.</p><p>The report highlights that injustice itself remains a major barrier to education. It argues that access to education is fundamentally linked to fairness, dignity and equal opportunity.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Guinea_Bissau">
+<h3 class="entity-hed">Guinea-Bissau</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.premiumtimesng.com/news/top-news/880956-afcon-2027-qualifiers-nigeria-to-battle-madagascar-guinea-bissau-for-ticket.html" target="_blank" rel="noopener">AFCON 2027 Qualifiers: Nigeria to battle Madagascar, Guinea-Bissau for ticket</a></h4>
+<p class="card-meta">Premium Times Nigeria · 19 May 2026</p>
+<p class="read-link"><a href="https://www.premiumtimesng.com/news/top-news/880956-afcon-2027-qualifiers-nigeria-to-battle-madagascar-guinea-bissau-for-ticket.html" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://flow.db.com/case-studies/guinea-s-wealth-creation-manifesto" target="_blank" rel="noopener">Guinea’s wealth creation manifesto</a></h4>
+<p class="card-meta">flow – Deutsche Bank · 21 May 2026</p>
+<div class="excerpt"><p>When Guinea Conakry’s (Republic of Guinea’s) leader General Mamady Doumbouya obtained 87.6% of the vote in the presidential election on 28 December 2025, this delivered a seven-year mandate; 1 presenting an opportunity for the country to invest in itself and move more of its population out of poverty.</p><p>Despite its abundant natural resources – including diamonds, iron ore, gold and bauxite – a growing population (now exceeding 15 million), and optimum geographic location, more than half the Guinean population lives below the international poverty level of US$3.65 a day.</p><p>Situated in West Africa bordering six countries (Guinea-Bissau, Senegal, Mali, Sierra Leone, Liberia and Côte d’Ivoire), this sub-Saharan African republic is ideally situated for agriculture and trade – and is one of the richest countries in the world for mineral wealth. Not enough of this wealth, however, is invested in the country itself – a deficiency the new government has tasked itself with rectifying. Part of its policy is improving Guinea’s investment climate. The government’s Programme de Référence Intérimaire de la Transition (PRI), launched in 2022, 2 set out various measures to address this.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/digital-inclusion/orange-opens-digital-center-in-guinea-bissau" target="_blank" rel="noopener">Orange opens digital center in Guinea-Bissau</a></h4>
+<p class="card-meta">Connecting Africa · 10 Oct 2024</p>
+<div class="excerpt"><p>Pan-African operator Orange has opened an Orange Digital Center (ODC) in Guinea-Bissau.</p><p>In a statement, the company said its ODCs are an ecosystem dedicated to developing digital skills to promote innovation, strengthening the employability of young people and supporting local entrepreneurship.</p><p>The Guinea-Bissau ODC will bring together in a single location a selection of free programs ranging from hands-on digital training for young people, support for project leaders, and startup acceleration and investment.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Mali">
+<h3 class="entity-hed">Mali</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://reliefweb.int/report/sudan/joint-news-release-wfpfaounicef-risk-famine-persists-nearly-195-million-people-face-acute-food-insecurity-sudan" target="_blank" rel="noopener">Mali: Food Security Outlook Update - Reduced food access worsening acute food insecurity in the north and center, April - September 2026</a></h4>
+<p class="card-meta">ReliefWeb · 22 May 2026</p>
+<div class="excerpt"><p>Conflict, displacement and restricted humanitarian access leave more than 825,000 children at risk of death from severe malnutrition in 2026</p><p>ROME/NEW YORK/PORT SUDAN, 15 May 2026 – The Food and Agriculture Organization (FAO), the World Food Programme (WFP) and UNICEF warned today that nearly 19.5 million people – two out of every five people in Sudan - are currently facing crisis levels of acute food insecurity (IPC Phase 3 or above) across Sudan, according to the latest Integrated Food Security Phase Classification (IPC) analysis.</p><p>Although the latest IPC analysis did not identify areas currently experiencing Famine (IPC Phase 5), conditions remain extremely concerning. The analysis shows that nearly 135,000 people are facing Catastrophic food insecurity (IPC Phase 5) across 14 hotspots in Darfur, South Darfur, and South Kordofan are at risk of famine in the coming months. More than five million people are classified under IPC Phase 4 (Emergency) and a further 14 million people are in IPC Phase 3 (Crisis). Conditions are expected to deteriorate further during the lean season between June and September.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.wfp.org/stories/every-meal-counts-how-wfp-using-ai-reach-more-people-faster" target="_blank" rel="noopener">Every meal counts: How WFP is using AI to reach more people, faster</a></h4>
+<p class="card-meta">UN World Food Programme · 19 May 2026</p>
+<div class="excerpt"><p>The World Food Programme (WFP) is renowned as a frontline responder when conflict erupts or disasters strike, moving rapidly to deliver emergency assistance.</p><p>In emergencies, families can lose everything in days. WFP teams must act fast, often in crowded, fast-moving settings where people are displaced, records are incomplete and needs change by the hour. In these contexts, some people in need might not receive the necessary assistance.</p><p>“Moving fast and with accuracy isn’t a luxury – it’s essential.” – Magan Naidoo, Chief Data Officer</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://aleteia.org/2026/05/22/u-s-bishops-stand-with-mali-after-terror-attacks/" target="_blank" rel="noopener">U.S. Bishops stand with Mali after terror attacks</a></h4>
+<p class="card-meta">aleteia.org · 22 May 2026</p>
+<div class="excerpt"><p>As Mali reels from one of the deadliest waves of violence in its recent history , the Catholic Church in the United States has reached across continents to offer comfort and solidarity to her sister Church in West Africa.</p><p>Bishop A. Elias Zaidan of the Maronite Eparchy of Our Lady of Lebanon of Los Angeles, who chairs the U.S. Conference of Catholic Bishops ’ Committee on International Justice and Peace, wrote on May 19 to Bishop Hassa Florent Koné of the Diocese of San on behalf of the American bishops. The letter followed a series of coordinated terrorist attacks that struck Mali on April 25–26, targeting military positions across the country, including the Kati military base near the capital, Bamako. Mali’s defense minister, Sadio Camara, was among those killed. The assaults were carried out by an al-Qaeda affiliate acting alongside Tuareg rebels.</p><p>In his letter , Bishop Zaidan assured the Malian faithful that their American brothers and sisters stood close in spirit . He expressed particular concern for the communities mourning military personnel and civilians killed in the attacks, and for those caring for the wounded.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Niger">
+<h3 class="entity-hed">Niger</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://africa.businessinsider.com/local/markets/aes-states-push-resource-control-as-niger-seals-dollar1-billion-energy-agreements/d3zpthw" target="_blank" rel="noopener">AES states push resource control as Niger seals $1 billion energy agreements with China</a></h4>
+<p class="card-meta">Business Insider Africa · 19 May 2026</p>
+<div class="excerpt"><p>Niger’s military-led government has signed a fresh series of oil agreements with Chinese energy firms, marking a major step in the Alliance of Sahel States’ (AES) broader push to strengthen energy cooperation and assert greater control over strategic natural resources.</p><p>Nigerien Prime Minister Ali Mahaman Lamine Zeine on Monday chaired the signing ceremony of a new oil partnership protocol with the China Oil and Gas Exploration and Development Corporation, describing the deal as a significant advance for the country’s petroleum sector.</p><p>The agreements come after months of tensions between Niamey and Chinese oil operators over labour disputes and regulatory compliance.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://globalvoices.org/2026/05/24/for-most-nigeriens-france-has-no-place-in-niger/" target="_blank" rel="noopener">For most Nigeriens, France has no place in Niger</a></h4>
+<p class="card-meta">Global Voices · 24 May 2026</p>
+<div class="excerpt"><p>This article is part of the Civic Media Observatory, a Global Voices research branch that uses a specific methodology to study the narratives of various media ecosystems . To learn more, click here . Since this article was first published on January 22, 2024, ECOWAS lifted its sanctions against Niger on February 24, 2024, talks between AES and ECOWAS failed , and the ousted president, Mohamed Bazoum, remains detained .</p><p>The periods preceding and following the coup d’état in Niger on July 26, 2023 , which ousted President Mohamed Bazoum (in office from April 2021 to July 2023), were marked by Nigeriens’ resolve to sever all ties with France. The public’s anti-French protests and discourse reaffirmed their anticipation of breaking away from this former colonial power.</p><p>From 2020, a wave of coups d’état swept across Central and West African countries. Nine of the region’s governments were overthrown, including seven under military coups . This phenomenon ultimately hit the Republic of Niger on July 26, 2023.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Agrifood &amp; Climate</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/niger-courts-dangote-for-oil-exploration-push/" target="_blank" rel="noopener">Niger courts Dangote for oil exploration push</a></h4>
+<p class="card-meta">Punch Newspapers · 25 May 2026</p>
+<div class="excerpt"><p>The Niger State Government has called on the Dangote Group and other private sector investors to explore opportunities in crude oil exploration at the Bida Basin in Niger State.</p><p>Speaking during a fireside session held on the Dangote Special Day at the recently concluded Niger National Trade Fair in Minna, the Commissioner for Trade, Investment, Industry, and Private Sector Development, Aminu Takuma, said the state is working with private sector operators under its One-Stop-Shop investment model to unlock its crude oil potential.</p><p>According to him, in a statement from Dangote Group on Sunday, the state government intends to retain only a minimal stake in the venture through a Joint Venture–Public Private Partnership arrangement.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Togo">
+<h3 class="entity-hed">Togo</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/adfd-advances-african-road-projects-infrastructure/" target="_blank" rel="noopener">ADFD advances African road projects, infrastructure</a></h4>
+<p class="card-meta">Punch Newspapers · 25 May 2026</p>
+<div class="excerpt"><p>The Abu Dhabi Fund for Development has reported progress on key road infrastructure projects in Nigeria, Togo, and Madagascar, with completion rates reaching 45 per cent, 92 per cent, and 80 per cent, respectively.</p><p>The fund said the projects form part of its development portfolio across Africa and are being closely monitored to ensure implementation aligns with approved frameworks and timelines.</p><p>In a statement, ADFD said the projects include the rehabilitation of the “Sokodé – Bassar” Road in Togo, a road infrastructure development project in Madagascar, and the “Minna – Bida” Road Project in Nigeria.</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/2205-19043-togo-s-economy-expands-6-3-in-2025-gdp-exceeds-5-6-trillion-cfa-francs" target="_blank" rel="noopener">Togo’s Economy Expands 6.3% in 2025, GDP Exceeds 5.6 Trillion CFA Francs</a></h4>
+<p class="card-meta">Togo First · 22 May 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/2205-19043-togo-s-economy-expands-6-3-in-2025-gdp-exceeds-5-6-trillion-cfa-francs" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Agrifood &amp; Climate</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/05/21/togo-secures-e24m-backing-for-new-drone-technology-initiative-with-poland/" target="_blank" rel="noopener">Togo Secures €24m Backing for New Drone Technology Initiative With Poland</a></h4>
+<p class="card-meta">TechAfrica News · 21 May 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/05/21/togo-secures-e24m-backing-for-new-drone-technology-initiative-with-poland/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="regional">
+<div class="section-rule"><span class="section-label">Regional</span></div>
+<div class="entity-block" id="WAEMU">
+<h3 class="entity-hed">WAEMU</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/1905-19009-kako-nubukpo-praises-adetikope-calls-industrialization-a-long-term-strategy" target="_blank" rel="noopener">Kako Nubukpo Praises Adétikopé, Calls Industrialization a Long-Term Strategy</a></h4>
+<p class="card-meta">Togo First · 19 May 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/1905-19009-kako-nubukpo-praises-adetikope-calls-industrialization-a-long-term-strategy" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/agriculture/2005-19019-prima-togo-launches-new-training-phase-to-boost-cross-border-agricultural-trade" target="_blank" rel="noopener">PRIMA-Togo launches new training phase to boost cross-border agricultural trade</a></h4>
+<p class="card-meta">Togo First · 20 May 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/agriculture/2005-19019-prima-togo-launches-new-training-phase-to-boost-cross-border-agricultural-trade" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.seneweb.com/fr/news/search?q=customs%20duties%20import%20vat%20public%20finances%20remain%20highly%20exposed" target="_blank" rel="noopener">Customs duties, import VAT: public finances remain highly exposed</a></h4>
+<p class="card-meta">Seneweb · 10 Apr 2026</p>
+<div class="excerpt"><p>Cette interface de recherche vous permet d'explorer toutes les archives d'actualités du Sénégal, de 2006 jusqu'à aujourd'hui. Profitez de notre base de données complète pour retrouver les événements marquants de ces dernières années.</p><p>Aucun article ne correspond à votre recherche
+															pour &quot; customs duties import vat public finances remain highly exposed &quot;</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Africa">
+<h3 class="entity-hed">Africa</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPSTlXSkFaRU1sMzh1OGVZY05DdkZYbDNFb0hDVDdEZVBsRUFOdHFtcUFya0NhdnlicEtPS3JCa0drdFhiVEcxYlVIQWFGUGVyYXVCX1JzOXYwbEs5T2cyX3BxVEpaTzllU2xHeHNzWnhoeG5jNWJuVU1YLXhrYUtqZEx4NlRnTExCRFNtM1pEMmJJS093bEdLZ3FmZThtUUhUR2Jn?oc=5" target="_blank" rel="noopener">South African inflation jumps in April, increasing chance of rate hike</a></h4>
+<p class="card-meta">Reuters · 20 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPSTlXSkFaRU1sMzh1OGVZY05DdkZYbDNFb0hDVDdEZVBsRUFOdHFtcUFya0NhdnlicEtPS3JCa0drdFhiVEcxYlVIQWFGUGVyYXVCX1JzOXYwbEs5T2cyX3BxVEpaTzllU2xHeHNzWnhoeG5jNWJuVU1YLXhrYUtqZEx4NlRnTExCRFNtM1pEMmJJS093bEdLZ3FmZThtUUhUR2Jn?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.ft.com/content/273aee17-25ee-4608-9be2-88433e28270e" target="_blank" rel="noopener">Protests spread in Africa as fuel crisis deepens</a></h4>
+<p class="card-meta">Financial Times · 20 May 2026</p>
+<div class="excerpt"><p>Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial.</p><p>Essential digital access to quality FT journalism on any device. Pay a year upfront and save 20%.</p><p>Complete digital access to quality FT journalism with expert analysis from industry leaders. Pay a year upfront and save 20%.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxONmJGRFZ2eENZNnM4aFZ0ZGpyZUNjU2RKZHY3WTlvanowWVdxSFh6SFFuM3JNd1Bua0hraVRkNWhGSEIxdVotN29SelBvSmZfT0lfN3BsSU5ObjhoTTk5MndYejBlYW0wNUZOMjNnMWh2VW41MUF3UEFMN294bHFUS3ZYdFZKU0RX?oc=5" target="_blank" rel="noopener">What Will It Take to Contain the Central Africa Ebola Outbreak?</a></h4>
+<p class="card-meta">Johns Hopkins Bloomberg School of Public Health · 22 May 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxONmJGRFZ2eENZNnM4aFZ0ZGpyZUNjU2RKZHY3WTlvanowWVdxSFh6SFFuM3JNd1Bua0hraVRkNWhGSEIxdVotN29SelBvSmZfT0lfN3BsSU5ObjhoTTk5MndYejBlYW0wNUZOMjNnMWh2VW41MUF3UEFMN294bHFUS3ZYdFZKU0RX?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+  </main>
+
+</div>
+
+<!-- Footer with scraping disclaimer and tag legend -->
+<footer class="footer">
+  <strong>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends</strong><br>
+  Monday 25 May 2026 &nbsp;·&nbsp; Mon, 25 May 2026 05:23 UTC<br>
+  Articles sourced from Google News RSS · Top 3 per country ranked by estimated reach<br>
+  Excerpts reproduced verbatim from publisher pages where accessible<br><br>
+  This roundup is produced automatically through a news scraper. Kindly click each article
+  title to read the full piece on the original publisher's site. Content has not been
+  editorially reviewed.<br><br>
+  Tags applied where terms appear in article titles or extracted text:
+  <strong>Youth · Women · Disabilities · Refugees · World Data Lab</strong>
+</footer>
+
+</body>
+</html>
