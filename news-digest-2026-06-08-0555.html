@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends — Monday 8 June 2026</title>
+<style>
+/* Reset: remove browser default margin/padding; use border-box sizing */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Design tokens — change these to restyle the whole report */
+:root {
+  --paper:      #f5f2eb;   /* warm cream background — aged newsprint feel */
+  --ink:        #1a1a18;   /* near-black body text */
+  --ink-2:      #3d3d38;   /* slightly lighter for excerpts */
+  --ink-3:      #7a7a72;   /* grey for captions and metadata */
+  --rule:       #ccc9be;   /* warm grey for light borders */
+  --rule-heavy: #1a1a18;   /* near-black for masthead double-rule */
+  --accent:     #1c3d5c;   /* deep ink-blue for headings and links */
+  --serif:      "Georgia", "Times New Roman", serif;
+  --sans:       "Helvetica Neue", "Arial", sans-serif;
+  --sidebar-w:  180px;     /* width of the left navigation sidebar */
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }   /* smooth anchor scrolling */
+body { font-family: var(--serif); background: var(--paper); color: var(--ink); line-height: 1.7; }
+
+/* Masthead — newspaper broadsheet header style */
+.masthead {
+  border-bottom: 3px double var(--rule-heavy);   /* double rule like a broadsheet newspaper */
+  padding: 36px 24px 20px;
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.masthead-eyebrow {                             /* small uppercase label above the title */
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.masthead h1 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 46px);   /* responsive — large on desktop, readable on mobile */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.masthead-dateline {                            /* date line with thin rules above and below */
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 7px 0;
+  margin-top: 14px;
+}
+
+/* Page body layout: sidebar on left, content on right */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;                /* side-by-side on desktop */
+  align-items: flex-start;
+  padding: 0 0 80px;
+}
+
+/* Left sidebar navigation */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;               /* sidebar never shrinks — content column takes remaining space */
+  border-right: 1px solid var(--rule);
+  position: sticky;             /* sidebar stays visible while content scrolls */
+  top: 0;
+  max-height: 100vh;            /* never taller than the viewport */
+  overflow-y: auto;             /* scrollable if the country list exceeds the viewport height */
+  padding: 28px 0;
+}
+.sidebar-inner { padding: 0 16px; }
+.nav-section-label {            /* section heading inside sidebar e.g. "Countries of Presence" */
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 5px;
+  margin: 20px 0 8px;
+}
+.nav-section-label:first-child { margin-top: 0; }   /* no top margin for first label */
+.nav-link {                     /* individual country/region link in sidebar */
+  display: block;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 0;
+  line-height: 1.4;
+}
+.nav-link:hover { text-decoration: underline; }
+
+/* Main content area */
+.content {
+  flex: 1;          /* takes all remaining horizontal space after sidebar */
+  min-width: 0;     /* prevents flex overflow on narrow screens */
+  padding: 28px 32px;
+}
+
+/* Geographic section — one per grouping (Presence, WAEMU, Regional) */
+.geo-section { margin-bottom: 60px; }
+.section-rule {                 /* ruled divider with section label centred in it */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  margin-top: 52px;
+}
+.geo-section:first-child .section-rule { margin-top: 0; }   /* no top margin for first section */
+.section-rule::before {         /* short thick bar to the left of the label */
+  content: '';
+  flex: 0 0 32px;
+  height: 3px;
+  background: var(--rule-heavy);
+}
+.section-rule::after {          /* long thin rule to the right of the label */
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.section-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;           /* label never wraps onto two lines */
+}
+
+/* Entity block — one per country or region */
+.entity-block { margin-bottom: 44px; }
+.entity-hed {                   /* country/region heading with underline rule */
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
+}
+
+/* Article card — plain ruled separator, no border-box or background */
+.card {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);   /* simple rule between articles */
+}
+.card:last-child {              /* no rule or padding after the last card */
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.card-hed {                     /* article headline */
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+.card-hed a {                   /* headline link — dark ink, underlines on hover */
+  color: var(--ink);
+  text-decoration: none;
+}
+.card-hed a:hover { color: var(--accent); text-decoration: underline; }
+.card-meta {                    /* source · date line */
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+}
+.excerpt {                      /* verbatim article text */
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.excerpt p { margin-bottom: 8px; }
+.excerpt p:last-child { margin: 0; }
+.read-link {                    /* 'Read article' hyperlink shown when no text is available */
+  font-family: var(--sans);
+  font-size: 12px;
+  margin-top: 6px;
+}
+.read-link a { color: var(--accent); text-decoration: underline; }
+
+/* Tag badges — outlined text labels, no filled backgrounds, no emoji */
+.tags { margin-bottom: 8px; }
+.tag {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid currentColor;   /* border colour set inline via style attribute */
+  border-radius: 2px;
+  margin-right: 5px;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  border-top: 3px double var(--rule);   /* double rule mirrors the masthead */
+  padding: 32px 24px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.footer strong { color: var(--ink-2); }
+
+/* Mobile: collapse sidebar to a horizontal list at the top */
+@media (max-width: 700px) {
+  .page-wrap { flex-direction: column; }   /* stack sidebar above content */
+  .sidebar {
+    width: 100%;
+    position: static;             /* no longer sticky on mobile */
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+    overflow-y: visible;
+  }
+  .sidebar-inner {               /* lay links out horizontally on mobile */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 0 16px;
+  }
+  .nav-section-label { width: 100%; margin: 10px 0 4px; }   /* full-width labels on mobile */
+  .content { padding: 20px 16px; }
+}
+
+.empty { font-family: var(--sans); font-size: 13px; color: var(--ink-3); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- Newspaper-style masthead with title, kicker, and dateline -->
+<header class="masthead">
+  <p class="masthead-eyebrow">Weekly News Roundup</p>
+  <h1>Africa Youth Employment<br>&amp; Macrotrends</h1>
+  <p class="masthead-dateline">Monday 8 June 2026</p>
+</header>
+
+<!-- Page body: sticky sidebar on left, scrolling content on right -->
+<div class="page-wrap">
+
+  <!-- Left sidebar: full index of all countries and regions with anchor links -->
+  <nav class="sidebar">
+<div class="sidebar-inner">
+<p class="nav-section-label">Countries of Presence</p>
+<a class="nav-link" href="#Ethiopia">Ethiopia</a>
+<a class="nav-link" href="#Ghana">Ghana</a>
+<a class="nav-link" href="#Kenya">Kenya</a>
+<a class="nav-link" href="#Nigeria">Nigeria</a>
+<a class="nav-link" href="#Rwanda">Rwanda</a>
+<a class="nav-link" href="#Senegal">Senegal</a>
+<a class="nav-link" href="#Uganda">Uganda</a>
+<p class="nav-section-label">WAEMU</p>
+<a class="nav-link" href="#Benin">Benin</a>
+<a class="nav-link" href="#Burkina_Faso">Burkina Faso</a>
+<a class="nav-link" href="#Côte_d_Ivoire">Côte d'Ivoire</a>
+<a class="nav-link" href="#Guinea_Bissau">Guinea-Bissau</a>
+<a class="nav-link" href="#Mali">Mali</a>
+<a class="nav-link" href="#Niger">Niger</a>
+<a class="nav-link" href="#Togo">Togo</a>
+<p class="nav-section-label">Regional</p>
+<a class="nav-link" href="#WAEMU">WAEMU</a>
+<a class="nav-link" href="#Africa">Africa</a>
+</div>
+</nav>
+
+
+  <!-- Main content: Countries of Presence → WAEMU → Regional in one continuous scroll -->
+  <main class="content">
+    <section class="geo-section" id="presence">
+<div class="section-rule"><span class="section-label">Countries of Presence</span></div>
+<div class="entity-block" id="Ethiopia">
+<h3 class="entity-hed">Ethiopia</h3>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.dw.com/en/ethiopias-election-results-will-likely-confirm-status-quo/a-77435414" target="_blank" rel="noopener">Ethiopia's election results will likely confirm status quo</a></h4>
+<p class="card-meta">DW.com · 7 Jun 2026</p>
+<div class="excerpt"><p>The June 1 parliamentary election in Ethiopia has been described as a success despite the exclusion of parts of the country for what officials said were security reasons.</p><p>Nearly 50 million people registered to vote in the election in Ethiopia, Africa's second-most-populous country. However, citing insecurity, officials suspended voting in at least 140 constituencies in two of the most populous regions: Amhara and Oromia.</p><p>Voting was also suspended in Tigray , the fourth-most-populous region, with election organizers citing &quot;unfavorable conditions.&quot;</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/cn0pngz2rego" target="_blank" rel="noopener">Ethiopia election: Voting suspended in parts of the country as Prime Minister Abiy Ahmed seeks another term</a></h4>
+<p class="card-meta">BBC · 1 Jun 2026</p>
+<div class="excerpt"><p>Voting in Monday's general election was suspended in parts of Ethiopia's Oromia and Amhara regions due to security concerns, but long voter queues were seen elsewhere, electoral commission head Melatwork Hailu announced.</p><p>Conflict in parts of Africa's second most populous country had already meant that many would not be able to take part in the seventh election since the end of the Marxist military regime in 1991.</p><p>In fact, the whole northern region of Tigray, which is trying to recover from a civil war that ended in 2022, has been totally excluded from the poll.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Country-Specific Context</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxPQlJTa0J6YU9RXzl0b1BBSXAzVU9ieUtNWkZnZXZid215UFdyVDdxWXkyQmdtTzNSLUJwYkMxN1o2MkptVHNyMC10RVRST1NsSXJfVUR2YVotR1pVeHNVckN4MGE3QkExaGJJN2k0VHpNTG5qMmMyMnFPZE9IdEhiLUdOTFJrSFRKd1F3WTFORG1Va3R0a2o2M3NONjdJWks4MFE?oc=5" target="_blank" rel="noopener">East Africa Braces for Abiy Return in Ethiopia</a></h4>
+<p class="card-meta">Bloomberg.com · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxPQlJTa0J6YU9RXzl0b1BBSXAzVU9ieUtNWkZnZXZid215UFdyVDdxWXkyQmdtTzNSLUJwYkMxN1o2MkptVHNyMC10RVRST1NsSXJfVUR2YVotR1pVeHNVckN4MGE3QkExaGJJN2k0VHpNTG5qMmMyMnFPZE9IdEhiLUdOTFJrSFRKd1F3WTFORG1Va3R0a2o2M3NONjdJWks4MFE?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Ghana">
+<h3 class="entity-hed">Ghana</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxNX2FTTTQzWS1NWFdZNXBVRjBSRDZubDNoNDA1MUlIZFI4cjRIX1NpYS03bkNQcDdXUXBHeFFoS01EQW41Yy1NaEVpcGpWbVF1aGVucXhiS3c4LUI1MXQ1VHE4d1FnNm8wei1SaU9RdlJIT2FNZVFjYUhBcVFXVjl6UUdkcHNQYXlCNkIwUHdxaVBLUWJrNEpzOFdmX3NncW5kWjNQSm5xTUUzcHNOd2VjVHAzQQ?oc=5" target="_blank" rel="noopener">Ghana’s Inflation Rises Second Straight Month as Iran Conflict Stokes Prices</a></h4>
+<p class="card-meta">Bloomberg.com · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxNX2FTTTQzWS1NWFdZNXBVRjBSRDZubDNoNDA1MUlIZFI4cjRIX1NpYS03bkNQcDdXUXBHeFFoS01EQW41Yy1NaEVpcGpWbVF1aGVucXhiS3c4LUI1MXQ1VHE4d1FnNm8wei1SaU9RdlJIT2FNZVFjYUhBcVFXVjl6UUdkcHNQYXlCNkIwUHdxaVBLUWJrNEpzOFdmX3NncW5kWjNQSm5xTUUzcHNOd2VjVHAzQQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7780662071628/will-ghanas-inflation-continue-uptrend" target="_blank" rel="noopener">Will Ghana’s inflation continue uptrend?</a></h4>
+<p class="card-meta">CNBC Africa · 5 Jun 2026</p>
+<div class="excerpt"><p>Ghana’s inflation rate rose for a second straight month in May, with higher food and energy costs pushing prices modestly higher and sharpening attention on whether fuel and transport pressures could drive a broader increase in the coming weeks.</p><p>Speaking in a televised interview, Nelson Kwaagbey, head of finance at Melbourne Capital, said the latest inflation print of 3.7% should not yet trigger alarm among policymakers, arguing that price growth remains comfortably within the Bank of Ghana’s medium-term target band.</p><p>The latest reading marked a 30-basis-point increase from April’s 3.4%, extending the recent uptrend and raising questions over whether inflation could continue to accelerate in June. Still, Kwaagbey said the current level remains well below the central bank’s stated objective of 8%, plus or minus 2 percentage points.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxNaDVoU0h0NFJ2SDZmaFpadFBENjJFNW5nNURQV1JBRGNGQi1sQXlQSUl3NGNsN0RCaXpmekVXc0pTVXZ2UGNWMzRTZTFjODlNTkxOYzBocGRoTlh6MzdDN2ZIdTEzT1FSVFRjZnoxUVh4Y01kcUt6dHVLYmVaT0t5T19IVUg4Y21YcGtVbEpqOERtS01peUlZVndLZG4zMFFtZ3VTNHpjZlhMZw?oc=5" target="_blank" rel="noopener">How Hackscience Technologies is Driving Fintech and Digital Innovation in Ghana</a></h4>
+<p class="card-meta">MarcoPolis · 4 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxNaDVoU0h0NFJ2SDZmaFpadFBENjJFNW5nNURQV1JBRGNGQi1sQXlQSUl3NGNsN0RCaXpmekVXc0pTVXZ2UGNWMzRTZTFjODlNTkxOYzBocGRoTlh6MzdDN2ZIdTEzT1FSVFRjZnoxUVh4Y01kcUt6dHVLYmVaT0t5T19IVUg4Y21YcGtVbEpqOERtS01peUlZVndLZG4zMFFtZ3VTNHpjZlhMZw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Kenya">
+<h3 class="entity-hed">Kenya</h3>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/cvgz7zny3pzo" target="_blank" rel="noopener">Two people shot dead amid Kenya protests against US Ebola quarantine centre plan</a></h4>
+<p class="card-meta">BBC · 3 Jun 2026</p>
+<div class="excerpt"><p>Two people have been shot dead in the central Kenyan town of Nanyuki amid protests against US plans to establish an Ebola isolation centre at a military base nearby, the BBC has learnt.</p><p>One of the victims was shot in an area close to the Laikipia Airbase where a demonstration was taking place. He died after being brought to the town's hospital by friends.</p><p>The other victim was already dead when he was taken to the hospital by soldiers.</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMi1wFBVV95cUxOYUVrTlhNMTdSVlltdmNESmFET3ZsYkZGZmxLLXRuMmZJWmdTTnpqUlFOckpjR1pBVjYxUkFrZ05YYl82UVdFUV95SURCVkVsQ1NRR2dHR2JHNmVoTXBGUlNDaWY5R0JJYkQyb01VTVMtSVlJMTRrdml4by1PNDdFVEhZRmpzWVpUdWo1WGZaZUVwWXJIclhVWXV2Wlg5cmxjVU5BQUE4NEpiaXVLRTFBdWJEdy1UaHBlTzZ6ckZwcHNCTE9XczVPYVNQRjc2N1Z2bHZBSXZNUQ?oc=5" target="_blank" rel="noopener">Protests over US Ebola site in Kenya kill two, court keeps suspension</a></h4>
+<p class="card-meta">Reuters · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMi1wFBVV95cUxOYUVrTlhNMTdSVlltdmNESmFET3ZsYkZGZmxLLXRuMmZJWmdTTnpqUlFOckpjR1pBVjYxUkFrZ05YYl82UVdFUV95SURCVkVsQ1NRR2dHR2JHNmVoTXBGUlNDaWY5R0JJYkQyb01VTVMtSVlJMTRrdml4by1PNDdFVEhZRmpzWVpUdWo1WGZaZUVwWXJIclhVWXV2Wlg5cmxjVU5BQUE4NEpiaXVLRTFBdWJEdy1UaHBlTzZ6ckZwcHNCTE9XczVPYVNQRjc2N1Z2bHZBSXZNUQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://apnews.com/article/kenya-school-fire-arson-girls-utumishi-ba54dc12694bf494b7e53a4662e2ec38" target="_blank" rel="noopener">9 students appear in court over Kenya school arson that killed 16 girls</a></h4>
+<p class="card-meta">AP News · 2 Jun 2026</p>
+<div class="excerpt"><p>NAIROBI, Kenya (AP) — Nine students accused of planning and executing an arson attack that killed 16 girls at a school in central Kenya appeared in court Tuesday.</p><p>Investigators asked for more time to probe the deadly fire. The High Court in the town of Naivasha, 90 kilometers (55 miles) west of the capital, Nairobi, said it will issue a ruling on Wednesday on whether the girls could be detained for a month pending investigations.</p><p>The fire on May 28 ripped through the Utumishi Girls School dormitory that houses 202 students. The school matron failed to open an emergency door, forcing all students to scamper through a single door, according to investigators.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Nigeria">
+<h3 class="entity-hed">Nigeria</h3>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/06/08/nigeria-celebrates-young-female-innovators-as-national-girls-in-ict-competition-produces-111-winners/" target="_blank" rel="noopener">Nigeria Celebrates Young Female Innovators as National Girls in ICT Competition Produces 111 Winners</a></h4>
+<p class="card-meta">TechAfrica News · 8 Jun 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/06/08/nigeria-celebrates-young-female-innovators-as-national-girls-in-ict-competition-produces-111-winners/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/cnv9dz3reego" target="_blank" rel="noopener">Protests in South Africa against foreigners: Nigeria join list of African kontris to evacuate citizens from South Africa as Ghana welcome second batch of citizens in Accra afta anti-immigration protests</a></h4>
+<p class="card-meta">BBC · 6 Jun 2026</p>
+<div class="excerpt"><p>A group of 150 Malawians repatriated from South Africa amid growing worries about xenophobia are due to arrive by road in their home country on Monday, the Malawian authorities have said.</p><p>The repatriation follows violence in South Africa's Western Cape Province where there were reports a week ago of door-to-door intimidation, as well as the deaths of two Mozambicans in Mossel Bay .</p><p>The Malawians were &quot;among a number of foreign nationals&quot; who had &quot;sought refuge in temporary camps&quot; in Mossel Bay, according to a statement from Lilongwe.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://apnews.com/article/nigeria-school-gunmen-kidnapping-1bf4dd27540a519fe1e80420805b75e4" target="_blank" rel="noopener">Gunmen kidnap 7 students from school in northwestern Nigeria</a></h4>
+<p class="card-meta">AP News · 5 Jun 2026</p>
+<div class="excerpt"><p>ABUJA, Nigeria (AP) — Gunmen raided an off-campus residence in northwest Nigeria and kidnapped seven students, police said.</p><p>The attack occurred early Wednesday in the Kaura Namoda area of conflict-battered Zamfara state, police spokesman Yazid Abubakar said in a statement. One of the students escaped and was in custody.</p><p>The police spokesman said it wasn’t clear where the students were taken but efforts were underway to rescue the remaining six.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Rwanda">
+<h3 class="entity-hed">Rwanda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxQcERBZ1RsTC10cGs1WGwtY2pQWkl2bjZLSkxLVlhzRHYwZW5VTkxhc3BsOUp4dHBPbGk3UFNuSG9ZOGNJa0RZTEdNazkxVmVxaW9sOVZsMlpMQVptX255YjBYa2pxUnVRUzhjM29FZEFzbWdNeGthOFVySkNGUGphYUFpMGJkbkYyX05Md3NMUW1GcGRVV0Fab1dtbkJ5WTQzQVJneUhDa1VwWS1GanBCeVBn?oc=5" target="_blank" rel="noopener">Emerging Markets Lead Rate Hikes as Iran War Fuels Inflation</a></h4>
+<p class="card-meta">Bloomberg.com · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxQcERBZ1RsTC10cGs1WGwtY2pQWkl2bjZLSkxLVlhzRHYwZW5VTkxhc3BsOUp4dHBPbGk3UFNuSG9ZOGNJa0RZTEdNazkxVmVxaW9sOVZsMlpMQVptX255YjBYa2pxUnVRUzhjM29FZEFzbWdNeGthOFVySkNGUGphYUFpMGJkbkYyX05Md3NMUW1GcGRVV0Fab1dtbkJ5WTQzQVJneUhDa1VwWS1GanBCeVBn?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFBQUnZDMFJJZHJkYVBXX21aSHJyZE51N09Kc3lpODJTTmdGa05ELWZOZl9vU2R0bDViZVhmWmFKUTNxTUI4ZnpfYWkxNm1oVGw2eUwxclRuQnQ?oc=5" target="_blank" rel="noopener">SpaceX seeks $1.75 trillion valuation ahead of IPO</a></h4>
+<p class="card-meta">BBC · 4 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFBQUnZDMFJJZHJkYVBXX21aSHJyZE51N09Kc3lpODJTTmdGa05ELWZOZl9vU2R0bDViZVhmWmFKUTNxTUI4ZnpfYWkxNm1oVGw2eUwxclRuQnQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/06/08/kepler-college-and-mtn-rwanda-formalize-collaboration-on-education-and-innovation/" target="_blank" rel="noopener">Kepler College and MTN Rwanda Formalize Collaboration on Education and Innovation</a></h4>
+<p class="card-meta">TechAfrica News · 8 Jun 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/06/08/kepler-college-and-mtn-rwanda-formalize-collaboration-on-education-and-innovation/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Senegal">
+<h3 class="entity-hed">Senegal</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/2026/senegals-hidden-debt-crisis-and-attempts-to-resolve-it-2" target="_blank" rel="noopener">Senegal’s hidden debt crisis and attempts to resolve it</a></h4>
+<p class="card-meta">CNBC Africa · 5 Jun 2026</p>
+<div class="excerpt"><p>DAKAR, June 6 (Reuters) – Senegal’s finances have been in crisis since the 2024 discovery of billions of dollars in debt hidden by the previous administration. Following is a timeline of how the West African country’s debt woes unfolded and efforts to address them:</p><p>March 2024 – Opposition candidate Bassirou Diomaye Faye, a former tax inspector popular with young voters, wins the presidential election.</p><p>September 2024 – Prime Minister Ousmane Sonko accuses former President Macky Sall’s government of lying to partners and falsifying figures.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1xeWJFUldWU2JNb2ExdGdpdTBFd1czaFpCbGFFZFhoaFBlVktUeE9tZVVnM1JUbHB4OW5PMXlrbGlhOEdxNnpib2o0N2dzeDkyQkQ1alFTUVVZaTFXdko5UXNJcWxCeE0?oc=5" target="_blank" rel="noopener">VPN Demand Statistics: VPN Demand Surges Around the World</a></h4>
+<p class="card-meta">Top10VPN · 5 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1xeWJFUldWU2JNb2ExdGdpdTBFd1czaFpCbGFFZFhoaFBlVktUeE9tZVVnM1JUbHB4OW5PMXlrbGlhOEdxNnpib2o0N2dzeDkyQkQ1alFTUVVZaTFXdko5UXNJcWxCeE0?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxOTkxEQzVpUUFuX0lEVXFVWllidVNxejRzQnR2YVdWYnV2Wk0xSmxaOFFGeHZwbGtBUjdDS0pBaGVMWW1EbHNyZE1aLXBGVmxWNld3RnJNSzV3d281S2ZMUWgzZlJHNTBJQV9xNkpkMFJZTXB5cVE5dVlPbktOS2NGeGdEOEhOdzVCMldWLUNIWDlhWVd3Um9TQnBKbFE0Ml9sdElGWjNBczZXRG90a3JaNEJaWQ?oc=5" target="_blank" rel="noopener">Senegal’s Sonko Reelected Pastef Chief as Rift With Faye Grows</a></h4>
+<p class="card-meta">Bloomberg.com · 6 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxOTkxEQzVpUUFuX0lEVXFVWllidVNxejRzQnR2YVdWYnV2Wk0xSmxaOFFGeHZwbGtBUjdDS0pBaGVMWW1EbHNyZE1aLXBGVmxWNld3RnJNSzV3d281S2ZMUWgzZlJHNTBJQV9xNkpkMFJZTXB5cVE5dVlPbktOS2NGeGdEOEhOdzVCMldWLUNIWDlhWVd3Um9TQnBKbFE0Ml9sdElGWjNBczZXRG90a3JaNEJaWQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Uganda">
+<h3 class="entity-hed">Uganda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxQQkg5V1YwLVVvR1F3dU41WUNfUWN0VFNEQ2lWUmUtUWZuUF93QW5PWjNPVzJJU0JGTDR5d0ttYVAyV0JDTTZDVVQ5U0w3UURVZ3JSdDdiUUNQbE1iaFp0aE81UWVwSnJzVE82bzZqVWk2bk5odWlFTEZ0VTN4RXNnUnFGRnVBY1hoX0hqLTZQQzJDdm1BWTBLbkxoT2dzWDJIQUJPMHpsUUdxcTFlNnRIS3d0ZG4?oc=5" target="_blank" rel="noopener">Uganda Convenes National Stakeholders Dialogue to Strengthen Ethical AI Governance</a></h4>
+<p class="card-meta">Unesco · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxQQkg5V1YwLVVvR1F3dU41WUNfUWN0VFNEQ2lWUmUtUWZuUF93QW5PWjNPVzJJU0JGTDR5d0ttYVAyV0JDTTZDVVQ5U0w3UURVZ3JSdDdiUUNQbE1iaFp0aE81UWVwSnJzVE82bzZqVWk2bk5odWlFTEZ0VTN4RXNnUnFGRnVBY1hoX0hqLTZQQzJDdm1BWTBLbkxoT2dzWDJIQUJPMHpsUUdxcTFlNnRIS3d0ZG4?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/2026/two-killed-in-kenya-protest-against-us-ebola-quarantine-facility-protest-organiser-says" target="_blank" rel="noopener">Protests over US Ebola site in Kenya kill two, court keeps block</a></h4>
+<p class="card-meta">CNBC Africa · 2 Jun 2026</p>
+<div class="excerpt"><p>NAIROBI, June 2 (Reuters) – A Kenyan court blocked on Tuesday for another three weeks a proposed U.S. Ebola quarantine facility that has triggered protests killing two people and ordered the government to disclose its agreement with Washington.</p><p>The proposed 50-bed unit on an air force base in central Kenya for Americans exposed to the virus in Democratic Republic of Congo or Uganda has angered many Kenyans. They accuse the U.S. of offloading the health risk of caring for patients.</p><p>A Kenyan court last week temporarily suspended the plan in response to a lawsuit from a legal advocacy group. However, U.S. military aircraft have continued to fly in staff and equipment in recent days, according to a U.S. official and diplomatic sources.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Agrifood &amp; Climate</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/2026/ugandas-april-coffee-export-earnings-down-10-yr-yr-agriculture-ministry-says" target="_blank" rel="noopener">Uganda’s April coffee export earnings down 10% yr/yr, agriculture ministry says</a></h4>
+<p class="card-meta">CNBC Africa · 8 Jun 2026</p>
+<div class="excerpt"><p>KAMPALA, June 8 (Reuters) – Uganda’s coffee export earnings dropped about 10% year-on-year in April amid a decline in global coffee prices, the agriculture ministry said on Monday.</p><p>Coffee is a major source of foreign exchange for the east African country, which is Africa’s largest exporter of the commodity.</p><p>In April Uganda shipped coffee worth $155.5 million, down from $173.4 million of the beans in same month last year, the agriculture ministry said in a report.</p></div>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="waemu">
+<div class="section-rule"><span class="section-label">WAEMU</span></div>
+<div class="entity-block" id="Benin">
+<h3 class="entity-hed">Benin</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://africa.businessinsider.com/local/markets/the-african-countries-quietly-turning-informal-workers-into-taxpayers-and-winning-the/0kwzby2" target="_blank" rel="noopener">The African countries quietly turning informal workers into taxpayers, and winning the battle against informality</a></h4>
+<p class="card-meta">Business Insider Africa · 5 Jun 2026</p>
+<div class="excerpt"><p>For decades, Africa’s vast informal economy has been one of the continent’s most persistent development challenges, limiting tax collection, weakening productivity, and keeping millions of workers and businesses outside the formal financial system.</p><p>While many countries continue to struggle with the problem, a small group of African nations is beginning to show that progress is possible.</p><p>According to a new report by Moody’s Ratings, Rwanda, Benin, Tanzania, and Côte d’Ivoire have emerged among the strongest performers in reducing informality, thanks to reforms that improved governance, strengthened institutions, and made it easier for businesses to operate within the formal economy.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/420722/2026-ranking-of-africas-20-top-performing-countries-winners-and-losers/" target="_blank" rel="noopener">2026 ranking of Africa’s 20 top-performing countries: Winners and losers</a></h4>
+<p class="card-meta">The Africa Report · 2 Jun 2026</p>
+<div class="excerpt"><p>Besides South Africa , which tops our 20 top-performing countries ranking once again, the hierarchy of performance and power in Africa is being thoroughly reshuffled. Mauritius climbs to second place and Namibia makes a spectacular breakthrough to claim a podium position, but Ethiopia has plummeted. Previously in strong positions, Botswana, Egypt and Kenya have also fallen.</p><p>Léonard Wantchekon: ‘Formalising the economy could generate $142bn for Africa’</p><p>More than the level of taxation itself, it is the ability of governments to collect taxes efficiently and build trust that determines economic performance, says the Beninese economist, a member of the UN High-Level Expert Group on Beyond GDP.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/police-dismiss-claims-of-student-kidnapping-in-edo/" target="_blank" rel="noopener">Police dismiss claims of student kidnapping in Edo</a></h4>
+<p class="card-meta">Punch Newspapers · 3 Jun 2026</p>
+<div class="excerpt"><p>The Edo State Police Command has debunked claims that students of Green Park Academy, Aduwawa, Benin City, were kidnapped, describing the report as entirely false and warning that the person behind its spread would be tracked down and prosecuted.</p><p>In a statement released on Wednesday, the command’s Public Relations Officer, Eno Ikoedem, said the false narrative was being propagated by a woman popularly known as “Azawoman” on social media, generating unnecessary concern among members of the public.</p><p>“The Edo State Police Command has become aware of a misleading and unfounded report circulating on social media alleging that students of Green Park Academy, Aduwawa, Benin City, were kidnapped. The false narrative, which is being propagated by a woman popularly known as ‘Azawoman,’ has generated unnecessary concern among members of the public,” the statement read.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Burkina_Faso">
+<h3 class="entity-hed">Burkina Faso</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://africa.businessinsider.com/local/lifestyle/africas-5-most-militarised-economies-spent-over-dollar33-billion-on-defence-in/0wx6ghw" target="_blank" rel="noopener">Africa’s 5 most militarised economies spent over $33 billion on defence in 2025—here’s what they have in common</a></h4>
+<p class="card-meta">Business Insider Africa · 7 Jun 2026</p>
+<div class="excerpt"><p>Africa’s five most militarised economies spent more than $33 billion on defence in 2025, highlighting how a small group of countries continues to dominate the continent’s military expenditure amid persistent security pressures.</p><p>The ranking, based on military spending as a share of GDP comes as global military expenditure reached a record $2.89 trillion in 2025, marking the 11th consecutive year of growth, according to the Stockholm International Peace Research Institute (SIPRI).</p><p>The military burden, a key measure of how heavily defence spending weighs on an economy, captures the share of national output directed toward the military. It provides a clearer picture of economic prioritisation than absolute spending alone.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/data-centers/togo-s-sin-st-digital-to-deploy-cloud-services-at-lom-data-center" target="_blank" rel="noopener">Togo's SIN, ST Digital to deploy cloud services at Lomé data center</a></h4>
+<p class="card-meta">Connecting Africa · 2 Jun 2026</p>
+<div class="excerpt"><p>Togo's Société d'Infrastructures Numériques (SIN) and ST Digital have signed a strategic partnership to launch private cloud services at the Lomé Data Centre (LDC).</p><p>Signed by SIN's Director General Attia Byll and ST Digital Togo Director General Justine Adebiyi, the partnership aims to strengthen Togo's digital sovereignty and support the development of local digital services.</p><p>Wholly owned by the Togolese government, SIN operates the LDC, a Tier III–certified facility.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxPYU1IM25fNGdhWDNtNzg4dFRhbWJVejYteU03bjBkekRCVy1pa3I0ZGZIVjNfeUF3RFFBdlQ5SzZ3elgyaHFCbGtkYjFpcVFJSGZXRXV3UDdsWURJR2JkQWJkOTRjVzg0WW9vNU03Yk96NzMxM1FlbTd4cHFGNjRsY1puaHFndThGcXFtMG5VSnY0SjlK0gGUAUFVX3lxTE8tTmpFTUVVM05ielNNWFVDUzFPR1lMbGZ5V3BYcWhkNWxXTFN1UmtxOFF4TVJJN19xRlA4dnBpaDcyVC1rdUNlc1RoUkNObXpicGpJcFRzWWx6bzdQTm5LVnppYS11MkVMVW5xQ2I2N2FJSGxjSFR1ZGkyYjkxa21aQmRVWFhobzVPQS02dUtocFhfOUo?oc=5" target="_blank" rel="noopener">Democracy in Africa: Coups, crises and foregone conclusions</a></h4>
+<p class="card-meta">DW.com · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxPYU1IM25fNGdhWDNtNzg4dFRhbWJVejYteU03bjBkekRCVy1pa3I0ZGZIVjNfeUF3RFFBdlQ5SzZ3elgyaHFCbGtkYjFpcVFJSGZXRXV3UDdsWURJR2JkQWJkOTRjVzg0WW9vNU03Yk96NzMxM1FlbTd4cHFGNjRsY1puaHFndThGcXFtMG5VSnY0SjlK0gGUAUFVX3lxTE8tTmpFTUVVM05ielNNWFVDUzFPR1lMbGZ5V3BYcWhkNWxXTFN1UmtxOFF4TVJJN19xRlA4dnBpaDcyVC1rdUNlc1RoUkNObXpicGpJcFRzWWx6bzdQTm5LVnppYS11MkVMVW5xQ2I2N2FJSGxjSFR1ZGkyYjkxa21aQmRVWFhobzVPQS02dUtocFhfOUo?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Côte_d_Ivoire">
+<h3 class="entity-hed">Côte d'Ivoire</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/420984/we-believed-in-ibrahim-traore-northern-cote-divoire-the-last-line-of-defence-against-the-jihadists/" target="_blank" rel="noopener">‘We believed in Ibrahim Traoré’: Northern Côte d’Ivoire, the last line of defence against the jihadists</a></h4>
+<p class="card-meta">The Africa Report · 5 Jun 2026</p>
+<div class="excerpt"><p>Join the top leaders who read The Africa Report every day</p><p>Sadio Camara is dead. In the village of Kafiguéla, in Mali’s Sikasso region, everyone has heard the news of the attack carried out jointly by the jihadist group JNIM and the separatist FLA. On the edge of southern Mali, the war had seemed far away – until gunfire rang out from the neighbouring village. On the night of 25 April, the rumour spread fast: three people were said to have been killed by</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/420493/economic-performance-is-cote-divoire-outpacing-ghana/" target="_blank" rel="noopener">Economic performance: Is Côte d’Ivoire outpacing Ghana?</a></h4>
+<p class="card-meta">The Africa Report · 1 Jun 2026</p>
+<div class="excerpt"><p>The announcement caught even seasoned observers off guard. On 30 December, Ghana ‘s finance ministry repaid a $709m eurobond ahead of schedule. All told, Accra settled $1.4bn of debt in 2025 alone, hailing the move as “an important new milestone in Ghana’s economic recovery and debt management efforts”. It has, in truth, come a long way.</p><p>2026 ranking: Which are the 20 best-performing countries in Africa?</p><p>There have been some radical shifts in hierarchy, as deep-seated changes affect the performance of Africa’s top 20 countries, measured on criteria including governance, influence and innovation. Here are the first takeaways from our top five: South Africa, Mauritius, Namibia, Morocco and Nigeria.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxQQkg5V1YwLVVvR1F3dU41WUNfUWN0VFNEQ2lWUmUtUWZuUF93QW5PWjNPVzJJU0JGTDR5d0ttYVAyV0JDTTZDVVQ5U0w3UURVZ3JSdDdiUUNQbE1iaFp0aE81UWVwSnJzVE82bzZqVWk2bk5odWlFTEZ0VTN4RXNnUnFGRnVBY1hoX0hqLTZQQzJDdm1BWTBLbkxoT2dzWDJIQUJPMHpsUUdxcTFlNnRIS3d0ZG4?oc=5" target="_blank" rel="noopener">Uganda Convenes National Stakeholders Dialogue to Strengthen Ethical AI Governance</a></h4>
+<p class="card-meta">UNESCO · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxQQkg5V1YwLVVvR1F3dU41WUNfUWN0VFNEQ2lWUmUtUWZuUF93QW5PWjNPVzJJU0JGTDR5d0ttYVAyV0JDTTZDVVQ5U0w3UURVZ3JSdDdiUUNQbE1iaFp0aE81UWVwSnJzVE82bzZqVWk2bk5odWlFTEZ0VTN4RXNnUnFGRnVBY1hoX0hqLTZQQzJDdm1BWTBLbkxoT2dzWDJIQUJPMHpsUUdxcTFlNnRIS3d0ZG4?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Guinea_Bissau">
+<h3 class="entity-hed">Guinea-Bissau</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/wbank-boosts-electricity-supply-across-west-africa/" target="_blank" rel="noopener">W’Bank boosts electricity supply across West Africa</a></h4>
+<p class="card-meta">Punch Newspapers · 4 Jun 2026</p>
+<div class="excerpt"><p>The World Bank has said its regional power integration and electricity access programme is strengthening electricity supply across West Africa, expanding cross-border power trade, improving utility finances and increasing access to electricity for millions of people.</p><p>In a results brief released recently, the bank said the West Africa Regional Power Integration and Electricity Access Programme is delivering more affordable, reliable and sustainable electricity across the sub-region, with impacts on jobs, gender inclusion and climate outcomes.</p><p>According to the report, more than 4,000 kilometres of high-voltage transmission lines have been constructed to connect the electricity grids of 15 West African countries under the West African Power Pool, enabling cross-border electricity trading.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/4g-networks/most-african-countries-have-some-4g-service-report" target="_blank" rel="noopener">Most African Countries Have Some 4G Service: Report</a></h4>
+<p class="card-meta">Connecting Africa · 10 Oct 2024</p>
+<div class="excerpt"><p>At least 43 of Africa's 55 countries (78%) are expected to have commercial 4G services on offer by the end of this year, according to a new report from GlobalData.</p><p>The past few years have seen many 4G LTE network deployments across the continent, even in small markets such as Djibouti, The Gambia and Guinea-Bissau.</p><p>But some countries are still lagging. The most notable country that will end this year without any 4G service is Mozambique, a country with an estimated population of more than 30 million people and three mobile operators (Vodacom, mCel and Movitel).</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://macaubusiness.com/macau-faces-structural-hurdles-to-entrepreneurship-scholar/" target="_blank" rel="noopener">Macau faces structural hurdles to entrepreneurship: scholar</a></h4>
+<p class="card-meta">Macau Business · 5 Jun 2026</p>
+<div class="excerpt"><p>The co-founder of the 929 Challenge highlights that despite official diversification rhetoric, rigid immigration rules and procurement practices create a structural block for foreign entrepreneurs</p><p>The 2026 edition of the startup competition expands its footprint into the Greater Bay Area through strategic partnerships in Shenzhen and an integration with the upcoming AIE Expo</p><p>One of the founders of the Sino-Lusophone 929 Challenge competition said on Friday that, despite official rhetoric on innovation and economic diversification, Macau continues to impose practical barriers that make life difficult for entrepreneurs, particularly foreigners.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Mali">
+<h3 class="entity-hed">Mali</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.cnbcafrica.com/media/7780569526301/moodys-changes-malis-outlook-to-negative-affirms-caa2-ratings" target="_blank" rel="noopener">Moody’s changes Mali's outlook to negative; affirms CAA2 ratings</a></h4>
+<p class="card-meta">CNBC Africa · 4 Jun 2026</p>
+<div class="excerpt"><p>Moody’s Ratings has revised Mali’s outlook to negative from stable while affirming the country’s long-term issuer and senior unsecured ratings at Caa2, underscoring mounting concerns over the country’s security situation, fiscal liquidity strains and rising risks to debt repayment capacity.</p><p>In an interview discussing the latest rating action, Rafael Alberti, assistant vice president analyst at Moody’s, said the outlook change was driven primarily by a deterioration in Mali’s security environment over the past year, which the agency believes could threaten the stability of the transition government and, in turn, the sovereign’s ability to service its debt.</p><p>According to Alberti, one of the key warning signs came last year when Bamako was blockaded by jihadist groups, disrupting fuel supplies and exposing the fragility of state control and logistics. More recently, large-scale coordinated attacks at the end of April by Tuareg separatist groups and jihadist forces reinforced concerns that the security backdrop is worsening rather than stabilizing.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxPYU1IM25fNGdhWDNtNzg4dFRhbWJVejYteU03bjBkekRCVy1pa3I0ZGZIVjNfeUF3RFFBdlQ5SzZ3elgyaHFCbGtkYjFpcVFJSGZXRXV3UDdsWURJR2JkQWJkOTRjVzg0WW9vNU03Yk96NzMxM1FlbTd4cHFGNjRsY1puaHFndThGcXFtMG5VSnY0SjlK0gGUAUFVX3lxTE8tTmpFTUVVM05ielNNWFVDUzFPR1lMbGZ5V3BYcWhkNWxXTFN1UmtxOFF4TVJJN19xRlA4dnBpaDcyVC1rdUNlc1RoUkNObXpicGpJcFRzWWx6bzdQTm5LVnppYS11MkVMVW5xQ2I2N2FJSGxjSFR1ZGkyYjkxa21aQmRVWFhobzVPQS02dUtocFhfOUo?oc=5" target="_blank" rel="noopener">Democracy in Africa: Coups, crises and foregone conclusions</a></h4>
+<p class="card-meta">DW.com · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxPYU1IM25fNGdhWDNtNzg4dFRhbWJVejYteU03bjBkekRCVy1pa3I0ZGZIVjNfeUF3RFFBdlQ5SzZ3elgyaHFCbGtkYjFpcVFJSGZXRXV3UDdsWURJR2JkQWJkOTRjVzg0WW9vNU03Yk96NzMxM1FlbTd4cHFGNjRsY1puaHFndThGcXFtMG5VSnY0SjlK0gGUAUFVX3lxTE8tTmpFTUVVM05ielNNWFVDUzFPR1lMbGZ5V3BYcWhkNWxXTFN1UmtxOFF4TVJJN19xRlA4dnBpaDcyVC1rdUNlc1RoUkNObXpicGpJcFRzWWx6bzdQTm5LVnppYS11MkVMVW5xQ2I2N2FJSGxjSFR1ZGkyYjkxa21aQmRVWFhobzVPQS02dUtocFhfOUo?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Country-Specific Context</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.myjoyonline.com/ministers-from-nigeria-mali-and-ghana-to-address-19th-edition-of-wampex/" target="_blank" rel="noopener">Ministers from Nigeria, Mali and Ghana to address 19th edition of WAMPEX</a></h4>
+<p class="card-meta">MyJoyOnline · 2 Jun 2026</p>
+<p class="read-link"><a href="https://www.myjoyonline.com/ministers-from-nigeria-mali-and-ghana-to-address-19th-edition-of-wampex/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Niger">
+<h3 class="entity-hed">Niger</h3>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.arise.tv/nddc-donates-medical-equipment-to-rivers-health-centre/" target="_blank" rel="noopener">NDDC Donates Medical Equipment To Rivers Health Centre</a></h4>
+<p class="card-meta">Arise News · 7 Jun 2026</p>
+<div class="excerpt"><p>The Niger Delta Development Commission (NDDC) has donated medical equipment to the Model Primary Health Care Centre in Orogbum Community, Port Harcourt Local Government Area of Rivers State.</p><p>The donation, according to a statement by the Director of Corporate Affairs, Seledi Thompson-Wakama, is part of the commission’s efforts to strengthen healthcare infrastructure and improve access to quality healthcare in the Niger Delta region.</p><p>Speaking during the handover, NDDC Managing Director, Dr Samuel Ogbuku, said the intervention aligns with the commission’s mandate to enhance healthcare delivery and improve the well-being of people in communities across the region.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFBnWWw0TnhZci1ELUc5WXp5TFpsV19fNmZHTFJ3b2ZQZ2VLelJfRlFKWW5kTzlncTB1WElHNDJjRkZKeUFpc3NiSWtYOGVDRktMNXhGSU9pOHA?oc=5" target="_blank" rel="noopener">Old images show children abused in Niger, not pupils abducted from schools in Nigeria</a></h4>
+<p class="card-meta">Fact Check AFP · 3 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFBnWWw0TnhZci1ELUc5WXp5TFpsV19fNmZHTFJ3b2ZQZ2VLelJfRlFKWW5kTzlncTB1WElHNDJjRkZKeUFpc3NiSWtYOGVDRktMNXhGSU9pOHA?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.turkiyetoday.com/nation/turkiye-niger-sign-sweeping-agreements-on-defense-health-trade-and-education-3221310" target="_blank" rel="noopener">Türkiye, Niger sign sweeping agreements on defense, health, trade and education</a></h4>
+<p class="card-meta">Türkiye Today · 4 Jun 2026</p>
+<div class="excerpt"><p>N iger's head of state Abdourahamane Tchiani made his first official visit outside Africa to Ankara on Thursday, where he met with President Recep Tayyip Erdogan at the Presidential Complex for bilateral talks that produced four formal agreements spanning higher education, trade, healthcare and diplomatic training.</p><p>The two leaders held one-on-one consultations followed by delegation-level talks before attending a signing ceremony and delivering a joint press conference.</p><p>The meetings covered defense industry cooperation, security, energy, mining, trade and investment, in addition to the formal agreements that were signed.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Togo">
+<h3 class="entity-hed">Togo</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/0506-19165-togo-team-europe-launch-partnership-to-turn-protected-areas-into-drivers-of-local-development" target="_blank" rel="noopener">Togo, Team Europe launch partnership to turn protected areas into drivers of local development</a></h4>
+<p class="card-meta">Togo First · 5 Jun 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/0506-19165-togo-team-europe-launch-partnership-to-turn-protected-areas-into-drivers-of-local-development" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/data-centers/togo-s-sin-st-digital-to-deploy-cloud-services-at-lom-data-center" target="_blank" rel="noopener">Togo's SIN, ST Digital to deploy cloud services at Lomé data center</a></h4>
+<p class="card-meta">Connecting Africa · 2 Jun 2026</p>
+<div class="excerpt"><p>Togo's Société d'Infrastructures Numériques (SIN) and ST Digital have signed a strategic partnership to launch private cloud services at the Lomé Data Centre (LDC).</p><p>Signed by SIN's Director General Attia Byll and ST Digital Togo Director General Justine Adebiyi, the partnership aims to strengthen Togo's digital sovereignty and support the development of local digital services.</p><p>Wholly owned by the Togolese government, SIN operates the LDC, a Tier III–certified facility.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Country-Specific Context</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/agriculture/0306-19129-togo-rolls-out-2-000-hectare-forestry-project-to-support-shea-industry-and-climate-resilience" target="_blank" rel="noopener">Togo rolls out 2,000-hectare forestry project to support shea industry and climate resilience</a></h4>
+<p class="card-meta">Togo First · 3 Jun 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/agriculture/0306-19129-togo-rolls-out-2-000-hectare-forestry-project-to-support-shea-industry-and-climate-resilience" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="regional">
+<div class="section-rule"><span class="section-label">Regional</span></div>
+<div class="entity-block" id="WAEMU">
+<h3 class="entity-hed">WAEMU</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMi6wFBVV95cUxOUWhNTHktQUhSTDU1cVBEdW9VMmZiQU5DdGI4QWtFcW9nU0ptUlRHci1Md2ZNMzI3MTVCS2lDZ1VRQkNjOTB2cXdNSUl1MXNzaS1PeEFKS2k4emdENjZ4RE9qeHY2TGFkX1BLSzFZbjJsNnhIQzlSY0lnTlQ4NFlKUktuV2xJZHB1QkxHVEJuRWstdWNRakFHSy1TTVN3b2toVndGTjZQXzZWZi1rV0pxTzZEa2VVZl9yRXZhVm9zejVKR1dWbVlLY2MtVGNXU3RJRnN1S3Y5eHc3OEtpV0x1RkFnWFdiNFY1cGpz?oc=5" target="_blank" rel="noopener">West African integration, between ambitious institutional architecture and still hesitant trade</a></h4>
+<p class="card-meta">Seneweb · 8 Mar 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMi6wFBVV95cUxOUWhNTHktQUhSTDU1cVBEdW9VMmZiQU5DdGI4QWtFcW9nU0ptUlRHci1Md2ZNMzI3MTVCS2lDZ1VRQkNjOTB2cXdNSUl1MXNzaS1PeEFKS2k4emdENjZ4RE9qeHY2TGFkX1BLSzFZbjJsNnhIQzlSY0lnTlQ4NFlKUktuV2xJZHB1QkxHVEJuRWstdWNRakFHSy1TTVN3b2toVndGTjZQXzZWZi1rV0pxTzZEa2VVZl9yRXZhVm9zejVKR1dWbVlLY2MtVGNXU3RJRnN1S3Y5eHc3OEtpV0x1RkFnWFdiNFY1cGpz?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxOdDd6c29TTWJMZG93ancxcnVVcmdobUhFZ3JWcHhmc3VIZi1UVS1maDMtT0hvMnRoSnNlSzlzYTFiYmN2RGlzWmlSbnlmcDZaX3Y4eEt5OUF3c0hqV3ZDZy03RVhUbXhwRGV0a3Rtb3JBTlpTOWJvUlZMVUY0c1RQSXNtdEF3RGR0M0pkTERsSFdqVXlrbm51eU1ObllpeUU5VVNWVnFhcTNkWU1pT1lZemZMNkNnX05nMkgw?oc=5" target="_blank" rel="noopener">WAEMU: Côte d’Ivoire, Mali and Togo raise 176 billion CFA francs on the regional market</a></h4>
+<p class="card-meta">Capmad.com · 2 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxOdDd6c29TTWJMZG93ancxcnVVcmdobUhFZ3JWcHhmc3VIZi1UVS1maDMtT0hvMnRoSnNlSzlzYTFiYmN2RGlzWmlSbnlmcDZaX3Y4eEt5OUF3c0hqV3ZDZy03RVhUbXhwRGV0a3Rtb3JBTlpTOWJvUlZMVUY0c1RQSXNtdEF3RGR0M0pkTERsSFdqVXlrbm51eU1ObllpeUU5VVNWVnFhcTNkWU1pT1lZemZMNkNnX05nMkgw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.seneweb.com/fr/news/search?q=waemu%20military%20ranking%202026%20mali%20in%20first%20place%20senegal%20in%204th%20place" target="_blank" rel="noopener">WAEMU Military Ranking 2026: Mali in first place, Senegal in 4th place</a></h4>
+<p class="card-meta">Seneweb · 28 Jan 2026</p>
+<div class="excerpt"><p>Cette interface de recherche vous permet d'explorer toutes les archives d'actualités du Sénégal, de 2006 jusqu'à aujourd'hui. Profitez de notre base de données complète pour retrouver les événements marquants de ces dernières années.</p><p>Aucun article ne correspond à votre recherche
+															pour &quot; waemu military ranking 2026 mali in first place senegal in 4th place &quot;</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Africa">
+<h3 class="entity-hed">Africa</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.bbc.com/news/articles/cwyd50g0y5zo" target="_blank" rel="noopener">South Africa's illegal immigration crackdown: President Ramaphosa unveils plan</a></h4>
+<p class="card-meta">BBC · 7 Jun 2026</p>
+<div class="excerpt"><p>South Africa's President Cyril Ramaphosa has addressed the nation to announce a raft of new measures to crackdown on illegal migration as tensions rise over anti-foreigner marches and frustrations about high unemployment.</p><p>These steps include jailing employers who hire undocumented workers, setting up dedicated courts to speed up deportations of undocumented migrants and having a register with biometric data &quot;for every person in the country&quot; to stamp out identity theft.</p><p>But he also warned South Africans not to take the law into their own hands.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNdW5tM3gxUDRNdGVqX05zSW03azZCUHlCWm5GTVpvaGVoTFF2WEtFTlE0VFlFNjFaSkw1ZjZONVlRYmZZZVYzaFhmaDNNZTRYUHdkMGN4UFlWRmw4MHF2RURTOVBKbFNhN0VLSnRpanlWSjNoV2dxTTE2VkRab1JPOHFydU44UXZ3N1FUXzVxQmNBR2NZLU9fVlc0b19mYlRMUmI1VUdiQmx3VHpfdnQ5SQ?oc=5" target="_blank" rel="noopener">South Africa’s Kganyago Vows to Get Inflation Back to 3%</a></h4>
+<p class="card-meta">Bloomberg.com · 2 Jun 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNdW5tM3gxUDRNdGVqX05zSW03azZCUHlCWm5GTVpvaGVoTFF2WEtFTlE0VFlFNjFaSkw1ZjZONVlRYmZZZVYzaFhmaDNNZTRYUHdkMGN4UFlWRmw4MHF2RURTOVBKbFNhN0VLSnRpanlWSjNoV2dxTTE2VkRab1JPOHFydU44UXZ3N1FUXzVxQmNBR2NZLU9fVlc0b19mYlRMUmI1VUdiQmx3VHpfdnQ5SQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theguardian.com/world/2026/jun/08/extreme-fear-among-immigrants-as-backlash-sweeps-south-africa" target="_blank" rel="noopener">‘Extreme fear’ among immigrants as backlash sweeps South Africa</a></h4>
+<p class="card-meta">The Guardian · 8 Jun 2026</p>
+<div class="excerpt"><p>African migrants say legal status offers little protection as rallies against illegal immigration gain momentum</p><p>African migrants in South Africa say they are living in fear after a series of marches calling for illegal immigrants to leave reignited long-held xenophobic sentiment in the country.</p><p>March &amp; March, a campaign group at the forefront of recent protests, has given people living illegally in the country until 30 June to leave, without specifying what will happen to those who do not.</p></div>
+</article>
+</div>
+</div>
+</section>
+
+  </main>
+
+</div>
+
+<!-- Footer with scraping disclaimer and tag legend -->
+<footer class="footer">
+  <strong>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends</strong><br>
+  Monday 8 June 2026 &nbsp;·&nbsp; Mon, 08 Jun 2026 05:55 UTC<br>
+  Articles sourced from Google News RSS · Top 3 per country ranked by estimated reach<br>
+  Excerpts reproduced verbatim from publisher pages where accessible<br><br>
+  This roundup is produced automatically through a news scraper. Kindly click each article
+  title to read the full piece on the original publisher's site. Content has not been
+  editorially reviewed.<br><br>
+  Tags applied where terms appear in article titles or extracted text:
+  <strong>Youth · Women · Disabilities · Refugees · World Data Lab</strong>
+</footer>
+
+</body>
+</html>
