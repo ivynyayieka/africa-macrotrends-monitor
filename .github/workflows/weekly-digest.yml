@@ -2,45 +2,121 @@
 # GitHub Actions workflow — runs the Africa digest pipeline automatically.
 # Place this file at: .github/workflows/weekly-digest.yml
 # in the africa-monitor repo.
+#
+# REDESIGN (see README for background): the search step used to be one job
+# processing all 58 entities serially, which occasionally exceeded GitHub's
+# 6-hour job limit and got killed mid-run with no output. This version splits
+# the search into SHARD_COUNT parallel jobs (a "matrix"), each covering a
+# slice of the entities, so no single job has anywhere near 6 hours of work.
+# A separate merge job then combines all shards into the actual digest —
+# but only once every shard has actually finished.
+# Checkpoints and shard results are committed to .checkpoints/ in the repo
+# (see sophisticated_search.py) so that if a shard still times out or errors,
+# a later trigger this same week resumes it from where it left off instead
+# of starting over. The search window itself is anchored to the calendar
+# week (WEEK_SLUG, computed inside the Python scripts), not to whichever day
+# a job happens to run on — so retries during the week never shift or
+# duplicate the date range being searched.
 
 name: Weekly Africa Digest   # display name shown in the GitHub Actions tab
 
 on:                           # defines when this workflow runs
   schedule:                     # time-based triggers
     - cron: '0 1 * * 1'      # run at 01:00 UTC every Monday — digest ready before start of business
+    - cron: '0 1 * * 3'      # check-in at 01:00 UTC every Wednesday — completes/resumes any shard that didn't finish Monday
+    - cron: '0 1 * * 5'      # check-in at 01:00 UTC every Friday — final safety net before the week ends
   workflow_dispatch:          # also allows manual trigger from the Actions tab in GitHub
 
+env:
+  SHARD_COUNT: 6              # number of parallel search shards — must match the matrix list below AND is read by production_export.py to know how many shard files to wait for
+
 jobs:
-  build:                      # single job containing all steps
-    runs-on: ubuntu-latest    # use GitHub's Ubuntu Linux runner (free tier)
-    timeout-minutes: 360      # allow up to 6 hours — full run takes ~2.5 hours for 58 entities
 
-    steps:                    # ordered list of tasks the job performs
+  # ── Job 1: search, split across SHARD_COUNT parallel runners ─────────────────
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360      # 6 hours — GitHub's hard ceiling for a single job; each shard now does ~1/6th the entities, so this should rarely be hit
+    strategy:
+      fail-fast: false        # if one shard fails, let the others keep running instead of cancelling them
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]   # shard indices 0-5 — must have SHARD_COUNT entries total
 
+    steps:
       - name: Checkout repo                    # step 1: download the repo files onto the runner
-        uses: actions/checkout@v5              # updated to Node.js 24 compatible version
+        uses: actions/checkout@v5
 
       - name: Set up Python 3.11              # step 2: install Python on the runner
-        uses: actions/setup-python@v6         # updated to Node.js 24 compatible version
-        with:                               # parameters passed to the setup-python action
-          python-version: '3.11'              # use Python 3.11 (matches local development environment)
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
 
       - name: Install dependencies            # step 3: install the Python libraries the scripts need
-        run: pip install requests beautifulsoup4 lxml   # same libraries installed by sophisticated_search.py at runtime
+        run: pip install requests beautifulsoup4 lxml
 
-      - name: Run search                      # step 4: run the main search script
-        run: python sophisticated_search.py   # fetches RSS for all entities, extracts text, saves results.pkl
-                                              # this step takes ~60 minutes for the full 58-entity run
+      - name: Run search shard                # step 4: run this shard's slice of the entity list
+        run: python sophisticated_search.py   # reads SHARD_INDEX/SHARD_COUNT below; resumes from .checkpoints/checkpoint-<week>-shard<N>.pkl if one already exists from an earlier attempt this week
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}    # this job's position in the matrix — becomes this shard's identity
+          SHARD_COUNT: ${{ env.SHARD_COUNT }} # total shard count, so the script knows how to slice the entity list
 
-      - name: Run production export           # step 5: generate output files from results.pkl
-        run: python production_export.py      # produces news-digest-YYYY-MM-DD.html, index.html, and CSV
+      - name: Commit shard progress            # step 5: save this shard's results (and delete its checkpoint) back to the repo
+        run: |                                 # multi-line shell script
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Because all 6 shard jobs run in parallel, they will try to push to
+          # the same branch at roughly the same time. Each shard only touches
+          # its own files under .checkpoints/, so a pull --rebase before push
+          # is always conflict-free — but the push itself can still race
+          # another shard's push, so retry a few times with a short random
+          # backoff rather than fail the whole shard over a push collision.
+          for attempt in 1 2 3 4 5; do
+            git add .checkpoints/                                               # stage only this shard's checkpoint/results files
+            git commit -m "Shard ${{ matrix.shard }} progress $(date -u +'%Y-%m-%d-%H%M')" || echo "Nothing to commit"
+            git pull --rebase origin main                                       # bring in any other shards' commits that landed first
+            if git push origin main; then
+              echo "Pushed on attempt $attempt"
+              break                                                             # success — stop retrying
+            fi
+            echo "Push conflict on attempt $attempt — retrying"
+            sleep $(( (RANDOM % 10) + 1 ))                                      # small random delay so competing shards don't retry in lockstep
+          done
 
-      - name: Commit and push outputs         # step 6: save the generated files back to the repo
-        run: |                              # multi-line shell script
-          git config user.name  "github-actions[bot]"              # set git author name for the commit
-          git config user.email "github-actions[bot]@users.noreply.github.com"   # set git author email
-          git add -A   # stage all new and modified files — most reliable way to catch time-stamped filenames   # wildcards catch time-stamped filenames; || true prevents failure if no new files
-          # ^ stage all output files using wildcards — handles time-stamped filenames like news-digest-2026-05-25-0142.html
-          # checkpoint.pkl is included in case the run was interrupted and needs to resume
-          git commit -m "Weekly digest $(date -u +'%Y-%m-%d-%H%M')" || echo "Nothing to commit"   # time in message distinguishes same-day re-runs
-          git push                            # push the commit to the main branch, triggering GitHub Pages to update
+  # ── Job 2: merge, runs once after all search shards finish ───────────────────
+  merge:
+    needs: search               # wait for every matrix shard to finish (success or failure) before merging
+    if: always()                # run even if one or more shards failed/timed out — production_export.py checks for itself whether all shard files actually exist, and exits cleanly if not
+    runs-on: ubuntu-latest
+    timeout-minutes: 30         # merging and formatting is fast — this is not the 58-entity search, just combining already-fetched results
+
+    steps:
+      - name: Checkout repo                    # pull the latest commits, including whatever shards just pushed above
+        uses: actions/checkout@v5
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run production export           # merges every results-<week>-shard*.pkl found in .checkpoints/, or exits cleanly if some shards are still missing
+        run: python production_export.py      # produces news-digest-YYYY-MM-DD.html, index.html, and the CSV — only if all SHARD_COUNT shard files are present for the current week
+        env:
+          SHARD_COUNT: ${{ env.SHARD_COUNT }} # so the merge step knows how many shard files to wait for before it's safe to publish
+
+      - name: Commit and push outputs         # save the generated files back to the repo — a no-op if production_export.py skipped (shards still incomplete)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git add -A -- ':!.checkpoints'                                       # stage generated outputs; leave .checkpoints/ alone here, the search jobs own those files
+            git commit -m "Weekly digest $(date -u +'%Y-%m-%d')" || echo "Nothing to commit"
+            git pull --rebase origin main
+            if git push origin main; then
+              echo "Pushed on attempt $attempt"
+              break
+            fi
+            echo "Push conflict on attempt $attempt — retrying"
+            sleep $(( (RANDOM % 10) + 1 ))
+          done
