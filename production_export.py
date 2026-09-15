@@ -12,18 +12,68 @@ import os                      # file path construction and existence checks
 import re                      # regular expressions for anchor-safe string cleaning
 from datetime import datetime  # formats dates for display in the HTML
 
-# ── Load results ──────────────────────────────────────────────────────────────
-with open("results.pkl", "rb") as f:   # open the binary file written by sophisticated_search.py
-    data = pickle.load(f)              # deserialise the dict back into Python objects
+import glob                    # finds all shard result files for the current week
+import sys                     # sys.exit() — used to stop cleanly if shards aren't all done yet
+from datetime import timedelta # used to recompute the week anchor, matching sophisticated_search.py
 
-results   = data["results"]    # list of per-entity dicts, each with a "categories" sub-dict
-generated = data["generated"]  # timestamp string e.g. "Mon, 14 May 2026 06:12 UTC"
-TODAY     = data["today"]      # datetime object — used to format the production date
-date_slug = data["date_slug"]  # YYYY-MM-DD string used in output filenames
-total_a   = data["total_a"]    # total articles collected across all entities and pillars
-total_t   = data["total_t"]    # subset of total_a where text was successfully extracted
+# ── Week anchor (must match sophisticated_search.py exactly) ───────────────────
+# This job may run well after the search shards did (e.g. a Wednesday check-in
+# merging work a Monday run left unfinished), so "today" here is NOT reliable
+# for figuring out which week we're merging. Recompute the same Monday anchor
+# the search script used, so we look for the correct week's shard files
+# regardless of what day the merge itself happens to run on.
+_now        = datetime.utcnow()
+_week_start = (_now - timedelta(days=_now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+WEEK_SLUG   = _week_start.strftime("%Y-%m-%d")   # e.g. 2026-05-25 — must match the search shards' WEEK_SLUG
 
-print(f"Loaded {len(results)} entities | {total_a} articles | {total_t} with text")   # confirm load
+# Expected number of shards — must match the matrix size in weekly-digest.yml.
+# Passed as an env var so the workflow is the single source of truth for shard
+# count; this script only needs to know how many results-*.pkl files to expect.
+SHARD_COUNT = int(os.environ.get("SHARD_COUNT", "1"))
+
+# ── Discover and merge this week's shard results ────────────────────────────────
+CHECKPOINT_DIR = ".checkpoints"
+shard_files = sorted(glob.glob(f"{CHECKPOINT_DIR}/results-{WEEK_SLUG}-shard*.pkl"))   # every shard that has finished so far this week
+
+if len(shard_files) < SHARD_COUNT:
+    # Not all shards are done yet — most likely some are still running, or a
+    # previous attempt got interrupted and hasn't been retried yet. Exit
+    # cleanly without writing any output files; the next scheduled check-in
+    # trigger will re-run the missing shards (resuming from their own
+    # checkpoints) and re-attempt this merge.
+    print(f"Only {len(shard_files)}/{SHARD_COUNT} shards finished for week {WEEK_SLUG} — skipping merge for now.")
+    sys.exit(0)
+
+# If this week's digest was already published by an earlier trigger this week
+# (e.g. Monday's run already had all shards done and merged successfully),
+# there's nothing new to produce — re-merging identical shard data would just
+# rewrite the same file and create a no-op commit on every later check-in.
+_expected_output = f"news-digest-{WEEK_SLUG}.html"
+if os.path.exists(_expected_output):
+    print(f"{_expected_output} already exists — week {WEEK_SLUG} already published. Nothing to do.")
+    sys.exit(0)
+
+print(f"Found all {SHARD_COUNT} shards for week {WEEK_SLUG} — merging...")
+
+results   = []    # combined list of per-entity dicts across all shards
+generated = None  # will hold the latest shard's "generated" timestamp string, for display
+week_start = None # datetime object anchored to this week's Monday, shared by every shard
+total_a   = 0
+total_t   = 0
+
+for shard_path in shard_files:                # load and combine every shard's results in turn
+    with open(shard_path, "rb") as f:
+        shard_data = pickle.load(f)           # deserialise this shard's dict
+    results.extend(shard_data["results"])     # append this shard's entities onto the combined list
+    total_a += shard_data["total_a"]          # running total across all shards
+    total_t += shard_data["total_t"]
+    generated  = shard_data["generated"]      # keep overwriting — final value is simply the last shard read, fine for display purposes
+    week_start = shard_data["week_start"]     # identical in every shard file — just needs to be read once
+
+TODAY     = week_start   # the rest of this script formats dates from TODAY — feed it the week anchor, not merge-run time, so the masthead date is correct regardless of which day the merge executes
+date_slug = WEEK_SLUG    # output filenames are now per-week, not per-run — e.g. news-digest-2026-05-25.html
+
+print(f"Merged {len(shard_files)} shards → {len(results)} entities | {total_a} articles | {total_t} with text")
 
 # ── Tag labels and colours ────────────────────────────────────────────────────
 # Tags are applied to articles where these terms appear in the title or text.

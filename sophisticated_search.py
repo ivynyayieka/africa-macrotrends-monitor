@@ -175,9 +175,30 @@ MAX_ARTICLES_PER_CAT = 5   # maximum articles collected per keyword string per c
 MAX_PARAGRAPHS       = 3      # maximum paragraphs extracted from each article page
 DELAY                = 0.8    # seconds between article fetches — keeps requests at human speed
 TIMEOUT              = 12     # seconds before giving up on a single HTTP request
-TODAY                = datetime.utcnow()                              # exact run time including hours and minutes
-DATE_FROM            = (TODAY - timedelta(days=7)).strftime("%Y-%m-%d")  # one week ago for RSS date filter
-TIME_SLUG            = TODAY.strftime("%Y-%m-%d-%H%M")                   # e.g. 2026-05-25-0142 — unique per run including same-day re-runs
+
+# ── Week anchor (NOT the same as "now") ───────────────────────────────────────
+# The search window and output filenames must depend on WHICH WEEK this run is
+# covering, not on the exact moment the job happens to execute. Otherwise a
+# Monday run and a Wednesday retry of the same week compute two different
+# "7 days ago" windows, and the days between them get double-covered by both.
+# Fix: always anchor to the most recent Monday (00:00 UTC), regardless of what
+# day/time it actually is when the script runs. Every run/retry/shard for the
+# same calendar week then agrees on the exact same window and filename.
+TODAY      = datetime.utcnow()                                   # exact run time — used only for display ("generated"), never for the search window or filenames
+WEEK_START = TODAY - timedelta(days=TODAY.weekday())              # TODAY.weekday(): Monday=0 ... Sunday=6, so this steps back to this week's Monday
+WEEK_START = WEEK_START.replace(hour=0, minute=0, second=0, microsecond=0)   # zero out the time-of-day so it's a stable midnight anchor
+DATE_FROM  = (WEEK_START - timedelta(days=7)).strftime("%Y-%m-%d")   # RSS filter: the Monday *before* this week's Monday — one full week, fixed per week
+WEEK_SLUG  = WEEK_START.strftime("%Y-%m-%d")                      # e.g. 2026-05-25 — identical across every run/retry/shard covering this week
+
+# ── Shard assignment ──────────────────────────────────────────────────────────
+# The workflow now runs this script as several parallel matrix jobs ("shards"),
+# each covering a slice of ALL_ENTITIES, so no single job has to process all 58
+# entities within GitHub Actions' 6-hour job limit. SHARD_INDEX/SHARD_COUNT are
+# passed in as environment variables from the matrix; when absent (e.g. running
+# locally), default to a single shard covering everything, so the script still
+# works unchanged for local testing.
+SHARD_INDEX = int(os.environ.get("SHARD_INDEX", "0"))    # this job's shard number, 0-based
+SHARD_COUNT = int(os.environ.get("SHARD_COUNT", "1"))    # total number of shards in the matrix
 
 HEADERS = {
     "User-Agent": (
@@ -547,8 +568,29 @@ def process_entity(entity):
 
 import pickle   # serialises Python objects to binary files
 
-CHECKPOINT_PATH = "checkpoint.pkl"   # checkpoint file — rebuilt each run, deleted on success
-RESULTS_PATH    = "results.pkl"      # final output read by production_export.py
+# Checkpoints and shard results live under .checkpoints/ and are committed to
+# the repo by the workflow after each entity — see save_checkpoint() below and
+# the "Commit shard progress" step in weekly-digest.yml. Committing to the repo
+# (rather than a GitHub Actions cache/artifact) is what makes them durable
+# across separate triggered runs: a Wednesday retry can `git pull` and see
+# exactly what a Monday run finished before it hit the timeout.
+# Both filenames include WEEK_SLUG and SHARD_INDEX so that (a) a leftover
+# checkpoint from a previous week is never mistaken for this week's progress,
+# and (b) parallel shards never collide on the same file.
+CHECKPOINT_DIR  = ".checkpoints"                                                        # subfolder — keeps repo root clean
+CHECKPOINT_PATH = f"{CHECKPOINT_DIR}/checkpoint-{WEEK_SLUG}-shard{SHARD_INDEX}.pkl"      # this shard's in-progress state
+RESULTS_PATH    = f"{CHECKPOINT_DIR}/results-{WEEK_SLUG}-shard{SHARD_INDEX}.pkl"         # this shard's finished output, read by production_export.py's merge step
+os.makedirs(CHECKPOINT_DIR, exist_ok=True)   # make sure the folder exists before we try to write into it
+
+# If this shard already finished successfully earlier this week (e.g. Monday's
+# run completed it), RESULTS_PATH already exists and CHECKPOINT_PATH was
+# deleted on success — there is nothing left for a Wednesday/Friday retry to
+# do. Without this check, a later trigger would find no checkpoint, assume a
+# fresh start, and silently re-fetch every entity in this shard again. Bail
+# out immediately instead.
+if os.path.exists(RESULTS_PATH):
+    print(f"{RESULTS_PATH} already exists — shard {SHARD_INDEX} already completed for week {WEEK_SLUG}. Nothing to do.")
+    exit(0)   # exit cleanly — this is success, not failure; the workflow's commit step will just find nothing new to push
 
 
 def load_checkpoint():
@@ -572,11 +614,12 @@ def save_checkpoint(results, done_entities):
 
 # ── RUN WITH CHECKPOINT ───────────────────────────────────────────────────────
 
-entities  = TEST_ENTITIES if TEST_MODE else ALL_ENTITIES   # choose test or full entity list
-generated = TODAY.strftime("%a, %d %b %Y %H:%M UTC")      # human-readable timestamp for output files
+full_list = TEST_ENTITIES if TEST_MODE else ALL_ENTITIES   # choose test or full entity list, before slicing by shard
+entities  = full_list[SHARD_INDEX::SHARD_COUNT]            # this shard's slice — e.g. shard 0 of 6 takes entities 0,6,12,...
+generated = TODAY.strftime("%a, %d %b %Y %H:%M UTC")      # human-readable timestamp for output files — actual run time, display only
 
-print(f"Generated: {generated}  |  after:{DATE_FROM}")
-print(f"Mode: {'TEST' if TEST_MODE else 'FULL'} — {len(entities)} entities × {len(CATEGORIES)} categories")
+print(f"Generated: {generated}  |  week:{WEEK_SLUG}  |  after:{DATE_FROM}")
+print(f"Shard {SHARD_INDEX}/{SHARD_COUNT}: {len(entities)} of {len(full_list)} entities × {len(CATEGORIES)} categories")
 print("=" * 60)
 
 # Load any checkpoint from a previous interrupted run — skips already-done entities
@@ -596,15 +639,20 @@ total_a = sum(len(a) for r in results for a in r["categories"].values())        
 total_t = sum(1 for r in results for v in r["categories"].values() for a in v if a["paragraphs"])  # with text
 print(f"\nDone: {len(results)} entities | {total_a} articles | {total_t} with text")
 
-# ── Save final results.pkl for production_export.py ───────────────────────────
+# ── Save this shard's final results.pkl for production_export.py to merge ─────
+# NOTE: this is one shard's results only, not the full week's digest. The
+# merge job (production_export.py, run after all shards finish) is what
+# combines every shard's results-*.pkl for this WEEK_SLUG into the actual
+# news-digest-*.html / index.html / CSV.
 with open(RESULTS_PATH, "wb") as f:
     pickle.dump({
-        "results":   results,    # complete list of entity result dicts
-        "generated": generated,  # timestamp string for display
-        "today":     TODAY,      # datetime object for date formatting
-        "date_slug": TIME_SLUG,                    # YYYY-MM-DD-HHMM — unique per run, prevents same-day overwrite
-        "total_a":   total_a,    # total article count across all entities
-        "total_t":   total_t,    # articles where text was successfully extracted
+        "results":     results,      # this shard's list of entity result dicts
+        "generated":   generated,    # timestamp string for display — this shard's actual run time
+        "week_start":  WEEK_START,   # datetime object anchored to this week's Monday — used for the masthead date after merge
+        "week_slug":   WEEK_SLUG,    # YYYY-MM-DD of this week's Monday — same across every shard covering this week
+        "shard_index": SHARD_INDEX,  # which shard produced this file
+        "total_a":     total_a,      # article count for this shard only
+        "total_t":     total_t,      # this shard's articles where text was successfully extracted
     }, f)
 print(f"Saved {RESULTS_PATH}")
 
