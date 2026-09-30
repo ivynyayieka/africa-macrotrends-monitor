@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends — Monday 28 September 2026</title>
+<style>
+/* Reset: remove browser default margin/padding; use border-box sizing */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Design tokens — change these to restyle the whole report */
+:root {
+  --paper:      #f5f2eb;   /* warm cream background — aged newsprint feel */
+  --ink:        #1a1a18;   /* near-black body text */
+  --ink-2:      #3d3d38;   /* slightly lighter for excerpts */
+  --ink-3:      #7a7a72;   /* grey for captions and metadata */
+  --rule:       #ccc9be;   /* warm grey for light borders */
+  --rule-heavy: #1a1a18;   /* near-black for masthead double-rule */
+  --accent:     #1c3d5c;   /* deep ink-blue for headings and links */
+  --serif:      "Georgia", "Times New Roman", serif;
+  --sans:       "Helvetica Neue", "Arial", sans-serif;
+  --sidebar-w:  180px;     /* width of the left navigation sidebar */
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }   /* smooth anchor scrolling */
+body { font-family: var(--serif); background: var(--paper); color: var(--ink); line-height: 1.7; }
+
+/* Masthead — newspaper broadsheet header style */
+.masthead {
+  border-bottom: 3px double var(--rule-heavy);   /* double rule like a broadsheet newspaper */
+  padding: 36px 24px 20px;
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.masthead-eyebrow {                             /* small uppercase label above the title */
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.masthead h1 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 46px);   /* responsive — large on desktop, readable on mobile */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.masthead-dateline {                            /* date line with thin rules above and below */
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 7px 0;
+  margin-top: 14px;
+}
+
+/* Page body layout: sidebar on left, content on right */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;                /* side-by-side on desktop */
+  align-items: flex-start;
+  padding: 0 0 80px;
+}
+
+/* Left sidebar navigation */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;               /* sidebar never shrinks — content column takes remaining space */
+  border-right: 1px solid var(--rule);
+  position: sticky;             /* sidebar stays visible while content scrolls */
+  top: 0;
+  max-height: 100vh;            /* never taller than the viewport */
+  overflow-y: auto;             /* scrollable if the country list exceeds the viewport height */
+  padding: 28px 0;
+}
+.sidebar-inner { padding: 0 16px; }
+.nav-section-label {            /* section heading inside sidebar e.g. "Countries of Presence" */
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 5px;
+  margin: 20px 0 8px;
+}
+.nav-section-label:first-child { margin-top: 0; }   /* no top margin for first label */
+.nav-link {                     /* individual country/region link in sidebar */
+  display: block;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 0;
+  line-height: 1.4;
+}
+.nav-link:hover { text-decoration: underline; }
+
+/* Main content area */
+.content {
+  flex: 1;          /* takes all remaining horizontal space after sidebar */
+  min-width: 0;     /* prevents flex overflow on narrow screens */
+  padding: 28px 32px;
+}
+
+/* Geographic section — one per grouping (Presence, WAEMU, Regional) */
+.geo-section { margin-bottom: 60px; }
+.section-rule {                 /* ruled divider with section label centred in it */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  margin-top: 52px;
+}
+.geo-section:first-child .section-rule { margin-top: 0; }   /* no top margin for first section */
+.section-rule::before {         /* short thick bar to the left of the label */
+  content: '';
+  flex: 0 0 32px;
+  height: 3px;
+  background: var(--rule-heavy);
+}
+.section-rule::after {          /* long thin rule to the right of the label */
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.section-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;           /* label never wraps onto two lines */
+}
+
+/* Entity block — one per country or region */
+.entity-block { margin-bottom: 44px; }
+.entity-hed {                   /* country/region heading with underline rule */
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
+}
+
+/* Article card — plain ruled separator, no border-box or background */
+.card {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);   /* simple rule between articles */
+}
+.card:last-child {              /* no rule or padding after the last card */
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.card-hed {                     /* article headline */
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+.card-hed a {                   /* headline link — dark ink, underlines on hover */
+  color: var(--ink);
+  text-decoration: none;
+}
+.card-hed a:hover { color: var(--accent); text-decoration: underline; }
+.card-meta {                    /* source · date line */
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+}
+.excerpt {                      /* verbatim article text */
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.excerpt p { margin-bottom: 8px; }
+.excerpt p:last-child { margin: 0; }
+.read-link {                    /* 'Read article' hyperlink shown when no text is available */
+  font-family: var(--sans);
+  font-size: 12px;
+  margin-top: 6px;
+}
+.read-link a { color: var(--accent); text-decoration: underline; }
+
+/* Tag badges — outlined text labels, no filled backgrounds, no emoji */
+.tags { margin-bottom: 8px; }
+.tag {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid currentColor;   /* border colour set inline via style attribute */
+  border-radius: 2px;
+  margin-right: 5px;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  border-top: 3px double var(--rule);   /* double rule mirrors the masthead */
+  padding: 32px 24px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.footer strong { color: var(--ink-2); }
+
+/* Mobile: collapse sidebar to a horizontal list at the top */
+@media (max-width: 700px) {
+  .page-wrap { flex-direction: column; }   /* stack sidebar above content */
+  .sidebar {
+    width: 100%;
+    position: static;             /* no longer sticky on mobile */
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+    overflow-y: visible;
+  }
+  .sidebar-inner {               /* lay links out horizontally on mobile */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 0 16px;
+  }
+  .nav-section-label { width: 100%; margin: 10px 0 4px; }   /* full-width labels on mobile */
+  .content { padding: 20px 16px; }
+}
+
+.empty { font-family: var(--sans); font-size: 13px; color: var(--ink-3); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- Newspaper-style masthead with title, kicker, and dateline -->
+<header class="masthead">
+  <p class="masthead-eyebrow">Weekly News Roundup</p>
+  <h1>Africa Youth Employment<br>&amp; Macrotrends</h1>
+  <p class="masthead-dateline">Monday 28 September 2026</p>
+</header>
+
+<!-- Page body: sticky sidebar on left, scrolling content on right -->
+<div class="page-wrap">
+
+  <!-- Left sidebar: full index of all countries and regions with anchor links -->
+  <nav class="sidebar">
+<div class="sidebar-inner">
+<p class="nav-section-label">Countries of Presence</p>
+<a class="nav-link" href="#Ethiopia">Ethiopia</a>
+<a class="nav-link" href="#Ghana">Ghana</a>
+<a class="nav-link" href="#Kenya">Kenya</a>
+<a class="nav-link" href="#Nigeria">Nigeria</a>
+<a class="nav-link" href="#Rwanda">Rwanda</a>
+<a class="nav-link" href="#Senegal">Senegal</a>
+<a class="nav-link" href="#Uganda">Uganda</a>
+<p class="nav-section-label">WAEMU</p>
+<a class="nav-link" href="#Benin">Benin</a>
+<a class="nav-link" href="#Burkina_Faso">Burkina Faso</a>
+<a class="nav-link" href="#Côte_d_Ivoire">Côte d'Ivoire</a>
+<a class="nav-link" href="#Guinea_Bissau">Guinea-Bissau</a>
+<a class="nav-link" href="#Mali">Mali</a>
+<a class="nav-link" href="#Niger">Niger</a>
+<a class="nav-link" href="#Togo">Togo</a>
+<p class="nav-section-label">Regional</p>
+<a class="nav-link" href="#WAEMU">WAEMU</a>
+<a class="nav-link" href="#Africa">Africa</a>
+</div>
+</nav>
+
+
+  <!-- Main content: Countries of Presence → WAEMU → Regional in one continuous scroll -->
+  <main class="content">
+    <section class="geo-section" id="presence">
+<div class="section-rule"><span class="section-label">Countries of Presence</span></div>
+<div class="entity-block" id="Ethiopia">
+<h3 class="entity-hed">Ethiopia</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#7a3a10;color:#7a3a10">Refugees</span></div><h4 class="card-hed"><a href="https://www.devdiscourse.com/article/other/3982957-refugees-and-host-communities-in-ethiopia-at-heart-of-new-ilo-and-unhcr-work-pact" target="_blank" rel="noopener">A Refugee Work Pact in Ethiopia Raises the Stakes for Real Jobs</a></h4>
+<p class="card-meta">Devdiscourse · 25 Sep 2026</p>
+<div class="excerpt"><p>Access to a job, recognised training or the chance to build a business can give refugees greater control over their lives and help the communities receiving them share in economic opportunities. A new agreement between the International Labour Organization (ILO) and UNHCR, the UN Refugee Agency, puts those needs at the centre of their work in Ethiopia. The agencies have signed a Supplementary Understanding to strengthen cooperation on decent work, sustainable livelihoods and economic inclusion, connecting refugee protection with practical opportunities to earn a living.</p><p>The agreement covers training that responds to market demand, better access to markets, digital inclusion and respect for labour rights. Research, shared knowledge and learning from different approaches will guide efforts to help refugees and host communities become more self-reliant. UNHCR Representative in Ethiopia Aissatou M. Ndiaye described the connection between protection and livelihoods at the signing ceremony: &quot;Protection must go beyond safety. Without access to decent work and livelihoods, people cannot fully realize their potential. This is where ILO's expertise is essential.&quot;</p><p>Ethiopia's Makatet Roadmap, a five-year national framework for managing its refugee population, provides the policy setting for this work. Khumbula Ndaba, director of the ILO country office covering Ethiopia, Djibouti, Somalia, Sudan and South Sudan, and its special representative to the African Union and UN Economic Commission for Africa, said the government's progress on inclusion creates a foundation for refugees to develop skills, find decent work and contribute to local economies. He identified policy dialogue, capacity building and labour market inclusion as shared responsibilities for the two agencies.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#4a2060;color:#4a2060">Women</span></div><h4 class="card-hed"><a href="https://www.theafricareport.com/431720/the-women-running-ethiopias-economy/" target="_blank" rel="noopener">The women running Ethiopia’s economy</a></h4>
+<p class="card-meta">The Africa Report · 28 Sep 2026</p>
+<div class="excerpt"><p>Join the top leaders who read The Africa Report every day</p><p>Ethiopia ’s cabinet and central bank remain almost entirely male. No woman has ever governed the National Bank of Ethiopia or held the full finance portfolio. Yet two women sit in the rooms where this year’s fiscal numbers are set, and four more run companies that touch tens of millions of Ethiopians daily. Together, they cover tax collection, sovereign debt, telecoms, transport, construction and</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQSkNqV2ZReWdQUVpqZ0E3OVNzeHBSWnA2VHhEVW80OHFUem5wazMxdUMyekh2aXlEMW5ONnVZQ244Q1I0UHBQMVhjVV9HMmVlQ1NXNC1kLXFlcmk5TWdjRnVsV1k3ZXlVamtKdHJ0TVZjdDRjVFRodHNseGl3Q2RUdGd4VlFYaHlNcWpHN0FuUHlZelUwWVVPUjdPd2V5RGNaYWN1aGVkOEZEZ19weUpOcmdVT05aM2FIMjdMUFJ3?oc=5" target="_blank" rel="noopener">Flush with allies, Tigray's leaders face internal discord in new Ethiopia war</a></h4>
+<p class="card-meta">Reuters · 24 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQSkNqV2ZReWdQUVpqZ0E3OVNzeHBSWnA2VHhEVW80OHFUem5wazMxdUMyekh2aXlEMW5ONnVZQ244Q1I0UHBQMVhjVV9HMmVlQ1NXNC1kLXFlcmk5TWdjRnVsV1k3ZXlVamtKdHJ0TVZjdDRjVFRodHNseGl3Q2RUdGd4VlFYaHlNcWpHN0FuUHlZelUwWVVPUjdPd2V5RGNaYWN1aGVkOEZEZ19weUpOcmdVT05aM2FIMjdMUFJ3?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Ghana">
+<h3 class="entity-hed">Ghana</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://africa.businessinsider.com/local/lifestyle/thousands-of-applicants-from-nigeria-ghana-affected-as-uk-blocks-direct-teaching/ge2zn3l" target="_blank" rel="noopener">Thousands of applicants from Nigeria, Ghana affected as UK blocks direct teaching qualification route</a></h4>
+<p class="card-meta">Business Insider Africa · 22 Sep 2026</p>
+<div class="excerpt"><p>Teachers trained in Nigeria and Ghana can no longer use England’s direct application service for Qualified Teacher Status (QTS), after the UK government tightened eligibility requirements for overseas-trained teachers.</p><p>The change took effect on September 9, 2026, when the UK Department for Education (DfE) removed Ghana, Nigeria and India from the countries whose teachers can use the “ Apply for QTS in England” service.</p><p>QTS is the professional status used in England and is a legal requirement to teach in many schools, although it is not required in every type of school, including some academies, free schools and private schools.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxPblZMN0I3cFBacXJ2b1hFWmNxWnFFaUszcHVHNVExZkxDanlwWk82TFpsM01ab0xqN0w5Z0pfT0NvZVdCQ3NONm9wa3JjVE41bk1kSlhtNTh3QUJZZzJSSVRRMEM0UGxpdzBmQTkzWV9qU19Rdk4wQ0UzdlVHMG51RENQS0RPSVNsbEtCcUxSSWE3TWZjUHkzUXFDNlBzdU82SkUzNFJ4TTFwNEdU?oc=5" target="_blank" rel="noopener">Ghana Holds Rate for Third Time in Row on Inflation Risks</a></h4>
+<p class="card-meta">Bloomberg · 24 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxPblZMN0I3cFBacXJ2b1hFWmNxWnFFaUszcHVHNVExZkxDanlwWk82TFpsM01ab0xqN0w5Z0pfT0NvZVdCQ3NONm9wa3JjVE41bk1kSlhtNTh3QUJZZzJSSVRRMEM0UGxpdzBmQTkzWV9qU19Rdk4wQ0UzdlVHMG51RENQS0RPSVNsbEtCcUxSSWE3TWZjUHkzUXFDNlBzdU82SkUzNFJ4TTFwNEdU?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.modernghana.com/news/1531229/when-education-becomes-too-expensive-ghana-must.html" target="_blank" rel="noopener">When Education Becomes Too Expensive: Ghana Must Regulate Private Schools Better</a></h4>
+<p class="card-meta">Modern Ghana · 27 Sep 2026</p>
+<div class="excerpt"><p>A child should not need a new set of textbooks every year when the same books can serve younger siblings. There is something fundamentally wrong when educating three children in the same family becomes unnecessarily expensive simply because they attend a private basic school.</p><p>Consider this simple example. Alex is in Primary Six. His sister, Doreen is in Primary Four. Another sibling, Dora is in Primary Two. Alex finishes Primary Six. If his textbooks are still in good condition, why should those books not be passed down to his younger siblings when they eventually reach the same level?</p><p>The mathematics is simple. One textbook bought today should ideally serve one child, then another, and perhaps another. The book becomes an educational asset of the family rather than a disposable commodity. Unfortunately, this principle appears increasingly difficult in parts of Ghana's private-school system. Some textbooks are designed as workbooks. Pupils are expected to write directly into them. Others are bundled with exercise books and supplementary materials. Some schools prescribe their own combinations of books and materials. Some schools change textbooks every academic year. When the academic year ends, the books cannot easily be passed on to younger siblings. For families with three or four children, the financial consequences can be considerable.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Kenya">
+<h3 class="entity-hed">Kenya</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://capitalfm.africa/new-lithium-mine-to-create-more-than-100-jobs/" target="_blank" rel="noopener">New lithium mine ‘to create more than 100 jobs’</a></h4>
+<p class="card-meta">Capital FM Africa · 28 Sep 2026</p>
+<div class="excerpt"><p>SEPT 28 – A new lithium mine is set to create more than 100 jobs under government plans, bosses say.</p><p>Geothermal Engineering Limited said it would invest about £43m in a lithium extraction facility in Cornwall, which it planned to bring into commercial production in 2029.</p><p>Officials said it was part of government plans to boost industrial resilience and help secure vital supply chains backing automotive, clean energy and advanced manufacturing sectors.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxPTVMxWDBGcXc0cUdxb2w5SzB2Nm1VR0dUWkVzY0hfS1BoczBTWUt3dHBtamliaFVTbkxDZ2l6d1lUWnQybjNNeTl1SWRmV1ZmR1FrN3JwcEJhdlM2NVhMelo1Wk85ZTNWWXV5WlBad2pQdEpNV1lhV0U5dEo3ZW1fNUF4cU95WERwZHJXeXI0SDVfa0FISWdtUEYzYjV2LUhtS2I1SFVBQm9KUDZodGpmRA?oc=5" target="_blank" rel="noopener">Kenya’s $14 Billion Housing Risks Stalling on Funding Squeeze</a></h4>
+<p class="card-meta">Bloomberg.com · 21 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxPTVMxWDBGcXc0cUdxb2w5SzB2Nm1VR0dUWkVzY0hfS1BoczBTWUt3dHBtamliaFVTbkxDZ2l6d1lUWnQybjNNeTl1SWRmV1ZmR1FrN3JwcEJhdlM2NVhMelo1Wk85ZTNWWXV5WlBad2pQdEpNV1lhV0U5dEo3ZW1fNUF4cU95WERwZHJXeXI0SDVfa0FISWdtUEYzYjV2LUhtS2I1SFVBQm9KUDZodGpmRA?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.intellinews.com/comment-nigeria-heads-for-5-growth-as-kenya-faces-rate-hikes-capital-economics-says-471337/?source=angola" target="_blank" rel="noopener">COMMENT: Nigeria heads for 5% growth as Kenya faces rate hikes, Capital Economics says</a></h4>
+<p class="card-meta">IntelliNews · 27 Sep 2026</p>
+<div class="excerpt"><p>Oil exporters Nigeria and Angola are riding out the energy shock while Kenya, Ethiopia and Mozambique face rate hikes and currency pressure, Capital Economics said on September 25.</p><p>The London-based consultancy is more upbeat than the consensus on growth in Nigeria, Ghana and, from next year, South Africa. It forecasts that sub-Saharan Africa’s growth will pick up to 4.1% this year from 3.6% in 2025 and reach 4.5% in both 2027 and 2028 as energy prices fall back, while regional inflation eases to 10.1% this year from 14.4% and to 7.7% by 2028.</p><p>“Vulnerabilities are concentrated in economies such as Kenya, Ethiopia and Mozambique, where the energy shock is compounding existing fiscal and external pressures. Pressure on currencies and the risk of debt distress could intensify,” Africa economist David Omojomolo wrote in the quarterly outlook, “Africa resilient but pockets of vulnerability remain” .</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Nigeria">
+<h3 class="entity-hed">Nigeria</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://punchng.com/nigeria-needs-more-investment-to-create-jobs-nesg/" target="_blank" rel="noopener">Nigeria needs more investment to create jobs – NESG</a></h4>
+<p class="card-meta">Punch Newspapers · 27 Sep 2026</p>
+<div class="excerpt"><p>The Nigerian Economic Summit Group has said Nigeria’s current level of investment is insufficient to create the jobs, improve productivity and deliver the broad-based prosperity required by its rapidly growing population.</p><p>The private sector-led policy advocacy group stated this in a statement issued on Sunday by its Head of Strategic Communication and Advocacy, Ayanyinka Ayanlowo, ahead of the 32nd Nigerian Economic Summit, scheduled for October 26 and 27, 2026, at the Transcorp Hilton Hotel, Abuja.</p><p>In its statement, the NESG said, “Economic transformation does not happen by chance. It is built on investment — investment in businesses, industries, infrastructure, innovation, and most importantly, people.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxOd1lWb3BrckwtWTl5S3FaUXVDNDY5MHhORWVoVjI0QVhaQnBJaDNSRXdoUjM0M21TNHBWTm9LbkpSLVJsUTBwYzZMT3JiQTJjaUhtcVV2YWdXZEJLREZuRU1tZnhFclZxMm9MSWVIeWxsQkVaUTJXUWhabjZOMWJ4MktEd2R0S0VEOEVzbDltZWxqODhRN0hpcmpUdDA4eHotQVJQN1V0aEJaT1Q2czZlR2s4RGxyV0J4S0xCMjd3X1VFYVVzQmVMSw?oc=5" target="_blank" rel="noopener">Rising fuel prices revive cost-of-living pressure in Nigeria ahead of 2027 election</a></h4>
+<p class="card-meta">Reuters · 21 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxOd1lWb3BrckwtWTl5S3FaUXVDNDY5MHhORWVoVjI0QVhaQnBJaDNSRXdoUjM0M21TNHBWTm9LbkpSLVJsUTBwYzZMT3JiQTJjaUhtcVV2YWdXZEJLREZuRU1tZnhFclZxMm9MSWVIeWxsQkVaUTJXUWhabjZOMWJ4MktEd2R0S0VEOEVzbDltZWxqODhRN0hpcmpUdDA4eHotQVJQN1V0aEJaT1Q2czZlR2s4RGxyV0J4S0xCMjd3X1VFYVVzQmVMSw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxQcXdJQVh0SThYdzZqVkdEeHdRMU9WbGF5UTNvWlJ0bTJWaFpxeGVPbVRBVUIzZlFiNW5EakQxQXNvNXZ6WWxJOVNJTjgwMnh1T3NSMWdwNWpxdnZMRzdZb2phM2xNQ3luYk9ZWmJuVjdMTEttRUx6ZkVpZXJOaGhQblZKTHZ0WFE1QnVhSlhsZnBFRGp1cTdPWTFiU0FfczFXMmQ0SmNPeVZiZw?oc=5" target="_blank" rel="noopener">NCDMB expands technical skills to boost Nigeria’s industrial workforce</a></h4>
+<p class="card-meta">Business News Nigeria · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxQcXdJQVh0SThYdzZqVkdEeHdRMU9WbGF5UTNvWlJ0bTJWaFpxeGVPbVRBVUIzZlFiNW5EakQxQXNvNXZ6WWxJOVNJTjgwMnh1T3NSMWdwNWpxdnZMRzdZb2phM2xNQ3luYk9ZWmJuVjdMTEttRUx6ZkVpZXJOaGhQblZKTHZ0WFE1QnVhSlhsZnBFRGp1cTdPWTFiU0FfczFXMmQ0SmNPeVZiZw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Rwanda">
+<h3 class="entity-hed">Rwanda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxObkphWm1GSUZRRjFMNE1aRlpzYV84UUExaVNKMXh3QW4xdGp5MERiaFM4Z3Y1MV9MaURsY19KVFphRmhiYVhNUnM5MTFHNzBhRXBVbkQ0UG5sbmtQVlpROE8wTXRkYnRETjRMQ3ZGLUdPVDlzbENTWW0xV2VDYjJHV21iZ0I1UUVIdVhFaHRNSUZlSk5fZ3hSZGJJeExLSG5oSlh2dHpsQmFVMU8y?oc=5" target="_blank" rel="noopener">Business: Middle East war: EAC currencies depreciate against</a></h4>
+<p class="card-meta">NewVision.co.ug · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxObkphWm1GSUZRRjFMNE1aRlpzYV84UUExaVNKMXh3QW4xdGp5MERiaFM4Z3Y1MV9MaURsY19KVFphRmhiYVhNUnM5MTFHNzBhRXBVbkQ0UG5sbmtQVlpROE8wTXRkYnRETjRMQ3ZGLUdPVDlzbENTWW0xV2VDYjJHV21iZ0I1UUVIdVhFaHRNSUZlSk5fZ3hSZGJJeExLSG5oSlh2dHpsQmFVMU8y?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.ned.org/ned-announces-the-winners-of-ai-hack-for-freedom-iii/" target="_blank" rel="noopener">NED ANNOUNCES THE WINNERS OF AI HACK FOR FREEDOM III</a></h4>
+<p class="card-meta">National Endowment for Democracy · 25 Sep 2026</p>
+<div class="excerpt"><p>Washington, D.C. — The National Endowment for Democracy (NED) is pleased to announce Rwanda’s Carine Kanimba as the first-place winner of the AI Hack for Freedom III, held at NED headquarters on September 24–25.</p><p>During the two-day competition, 10 pro-democracy activists from Colombia, Kenya, Nepal, North Macedonia, Rwanda, Tibet, Turkey, Ukraine, Venezuela, and Zimbabwe learned about AI-powered personal assistants and led teams of software developers and designers to create custom solutions to challenges they face as activists. All participants collaborated with technology firm Finite on next-generation AI tools and learned to safely deploy them around the world.</p><p>The projects were evaluated by a panel of judges with expertise spanning technology, human rights, and diplomacy: Suhail Khan, Senior Director of External Affairs at Microsoft and Senior Fellow at the Institute for Global Engagement; Gustavo Flores-Macías, Dean of the University of Maryland’s School of Public Policy; Ambassador Tobin Bradley, Diplomatic Technology Director at the U.S. State Department; Chris Kinnan, Executive Director of Technology at Atlas Network; Anna Chekhovich, Financial Director at the Anti-Corruption Foundation; and Anne Tsai Bennett, Board Member at China Human Rights Defenders.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://techafricanews.com/2026/09/22/rwanda-signs-mou-with-chipmango-to-build-local-semiconductor-design-skills/" target="_blank" rel="noopener">Rwanda Signs MoU With ChipMango to Build Local Semiconductor Design Skills</a></h4>
+<p class="card-meta">TechAfrica News · 23 Sep 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/09/22/rwanda-signs-mou-with-chipmango-to-build-local-semiconductor-design-skills/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Senegal">
+<h3 class="entity-hed">Senegal</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxPY0pUVGhXenZUMkVuVklvMmNueWJ4Vmd2UFhvOFNvb0dfUDRpb2pZWjdyUUMtNlVHOENRT2tCRHF3QTgyTlJ0emZiWXNyUXlVT3hDQ0pSR0ZSV1BnUjlXZmFraTRCVlhTRWdFQ3laRVMyeXotMkpuV1RHaFpCZ1E3NmtBaWd6ekt5X1Q2bHNFNGg1QQ?oc=5" target="_blank" rel="noopener">Barclays flags Senegal's deficit topping 9% of GDP as debt costs surge</a></h4>
+<p class="card-meta">Briefs Finance · 22 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxPY0pUVGhXenZUMkVuVklvMmNueWJ4Vmd2UFhvOFNvb0dfUDRpb2pZWjdyUUMtNlVHOENRT2tCRHF3QTgyTlJ0emZiWXNyUXlVT3hDQ0pSR0ZSV1BnUjlXZmFraTRCVlhTRWdFQ3laRVMyeXotMkpuV1RHaFpCZ1E3NmtBaWd6ekt5X1Q2bHNFNGg1QQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxPaEVSa1dXc3l6aFZrRkg0Z0xqaU1kdUVvclowT1p5QUFRdE1xZ2MzLVl3N1FSek5hUUUtYUxWaWZZTVFzdXljaDhKa3c2Ty1rVTlqNXpJb3UtSS1KaWZVSnJ3X3ZsLUFQV0pUb3NJRTBCMnhkaGl5QWlNNVZBOU5fSEZLTDRuVXcwM1ZoWDZrbDFydFFMR09kSzUtTUViTlVlQmpsa3RFbFJIYlJzZGJlQThzcDI?oc=5" target="_blank" rel="noopener">Barclays Sees Senegal Deficit Widening to 9% as Debt Talks Begin</a></h4>
+<p class="card-meta">Bloomberg · 22 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxPaEVSa1dXc3l6aFZrRkg0Z0xqaU1kdUVvclowT1p5QUFRdE1xZ2MzLVl3N1FSek5hUUUtYUxWaWZZTVFzdXljaDhKa3c2Ty1rVTlqNXpJb3UtSS1KaWZVSnJ3X3ZsLUFQV0pUb3NJRTBCMnhkaGl5QWlNNVZBOU5fSEZLTDRuVXcwM1ZoWDZrbDFydFFMR09kSzUtTUViTlVlQmpsa3RFbFJIYlJzZGJlQThzcDI?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxOaGdvTGVvS2VsbnFVcUJSTmIzNkQ5QXBJeGYyekVtVDNaX3ZURXZ5MVBWTG9iSzVEUXhFekItemN1U05UZlBackppTm9Ec0hfcmZVMERuNFZiNFNkR1pSdTY1dmduN3N0eGktQUFDd2t1RDFBdDNxT0tTbEtfSGl5dzVkTF9NeGpORDg0aG5RVGRYV3hvVGd4ZXZyaTBmOFY2SzctV0tmZ21OWlJyRHh4VkVZbU9aeDFDYk9fMnNBRU5fTGlTSHdYaFJpNHVSRk1YOGc?oc=5" target="_blank" rel="noopener">Senegal's President Faye: Macky Sall best candidate 'to fight for Africa' at UN</a></h4>
+<p class="card-meta">RFI · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxOaGdvTGVvS2VsbnFVcUJSTmIzNkQ5QXBJeGYyekVtVDNaX3ZURXZ5MVBWTG9iSzVEUXhFekItemN1U05UZlBackppTm9Ec0hfcmZVMERuNFZiNFNkR1pSdTY1dmduN3N0eGktQUFDd2t1RDFBdDNxT0tTbEtfSGl5dzVkTF9NeGpORDg0aG5RVGRYV3hvVGd4ZXZyaTBmOFY2SzctV0tmZ21OWlJyRHh4VkVZbU9aeDFDYk9fMnNBRU5fTGlTSHdYaFJpNHVSRk1YOGc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Uganda">
+<h3 class="entity-hed">Uganda</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#7a3a10;color:#7a3a10">Refugees</span></div><h4 class="card-hed"><a href="https://techafricanews.com/2026/09/28/mtn-uganda-ict-hub-refugees-host-community-palabek/" target="_blank" rel="noopener">MTN Uganda Opens ICT Hub for Refugees and Host Community in Palabek</a></h4>
+<p class="card-meta">TechAfrica News · 28 Sep 2026</p>
+<p class="read-link"><a href="https://techafricanews.com/2026/09/28/mtn-uganda-ict-hub-refugees-host-community-palabek/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE05NE5QQUV0a3JuNWtESFFETEt5Mk5UT0hTdXRRRTdFemFhQ3g1Y0xJWkh6ejhKUzBTaXo0VnZsdmRuUlprR1FiNkdKUE9oMDFZVFhBa2hfRkNjN2V4RS1peG1MdFo0VHdzTm9iMVdjUWU2dXNFU1luMnBEelZsSnM?oc=5" target="_blank" rel="noopener">Uganda's government opponents on trial</a></h4>
+<p class="card-meta">DW.com · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE05NE5QQUV0a3JuNWtESFFETEt5Mk5UT0hTdXRRRTdFemFhQ3g1Y0xJWkh6ejhKUzBTaXo0VnZsdmRuUlprR1FiNkdKUE9oMDFZVFhBa2hfRkNjN2V4RS1peG1MdFo0VHdzTm9iMVdjUWU2dXNFU1luMnBEelZsSnM?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.dailyherald.com/20260925/submitted-content/fall-foodie-fest-fundraiser-oct-17-to-helps-build-school-in-uganda/" target="_blank" rel="noopener">Fall Foodie Fest Fundraiser Oct. 17 to help build School in Uganda</a></h4>
+<p class="card-meta">Daily Herald · 25 Sep 2026</p>
+<div class="excerpt"><p>Shelter Academy of Light has announced that they are hosting their third annual Fall Foodie Fest fundraiser from 5:30-8:30 p.m. Saturday, Oct. 17, at Greenbrier Elementary School in Arlington Heights, to raise funds to build a school in an impoverished area of the Mount Elgon region in Eastern Uganda.</p><p>Greenbrier Elementary School is at 2330 N. Verde Drive, Arlington Heights.</p><p>Shelter Academy of Light is a nonprofit that began in 2012 when founders and native Ugandans George and Grace Sakwa envisioned bringing the quality education that they experienced for their children in Arlington Heights School District 25 to the impoverished region where they were raised. Knowing that education is the key to breaking the cycle of poverty, the Sakwa family has been steadfast in their mission.</p></div>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="waemu">
+<div class="section-rule"><span class="section-label">WAEMU</span></div>
+<div class="entity-block" id="Benin">
+<h3 class="entity-hed">Benin</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://gazettengr.com/edo-govt-targets-jobs-revenue-through-tourism-hospitality-sectors/" target="_blank" rel="noopener">Edo govt. targets jobs, revenue through tourism, hospitality sectors</a></h4>
+<p class="card-meta">gazettengr.com · 25 Sep 2026</p>
+<div class="excerpt"><p>Mr Okaeben said the state government was committed to creating an enabling environment where talents could thrive.</p><p>The Edo government says it is targeting increased job creation and revenue generation through the development of the state’s creative economy, tourism and hospitality sectors.</p><p>The state commissioner for arts and culture, Chris Okaeben, disclosed this on Friday at a stakeholders’ engagement with players in the hospitality and creative industries in Benin City.</p></div>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiygFBVV95cUxQcEpFaFdnUE9tUTFKVTRVMWthc05qOV9GVTQ2NjJDYXpzdnVNS3NwOEN2N2g1LV9icXlmY3laem1EWWpzMjl0cnN6clZMSkMwVlJydzRRRWFsZ3BZZTVGUTdUWFoyejRtRjJZYTF0WmdfT3JXVjgyU1VGRzdUUEtZWDgxRzNoNl9Na3pFNWk1MEdPY3ZfOFpUd0g3aWVMSllIMFlCMUZhOUJTeTl0RFptc2xtcGtEdFJNVlJ1aF9CQlM1OC1tdWNIVmRn0gHKAUFVX3lxTFBwSkVoV2dQT21RMUpVNFUxa2FzTmo5X0ZVNDY2MkNhenN2dU1Lc3A4Q3Y3aDUtX2JxeWZjeVp6bURZanMyOXRyc3pyVkxKQzBWUnJ3NFFFYWxncFllNUZRN1RYWjJ6NG1GMllhMXRaZ19PcldWODJTVUZHN1RQS1lYODFHM2g2X01rekU1aTUwR09jdl84WlR3SDdpZUxKWUgwWUIxRmE5QlN5OXREWm1zbG1wa0R0Uk1WUnVoX0JCUzU4LW11Y0hWZGc?oc=5" target="_blank" rel="noopener">Tickets sold out in less than two hours for Lionel Messi's final Argentina match</a></h4>
+<p class="card-meta">gulfnews.com · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiygFBVV95cUxQcEpFaFdnUE9tUTFKVTRVMWthc05qOV9GVTQ2NjJDYXpzdnVNS3NwOEN2N2g1LV9icXlmY3laem1EWWpzMjl0cnN6clZMSkMwVlJydzRRRWFsZ3BZZTVGUTdUWFoyejRtRjJZYTF0WmdfT3JXVjgyU1VGRzdUUEtZWDgxRzNoNl9Na3pFNWk1MEdPY3ZfOFpUd0g3aWVMSllIMFlCMUZhOUJTeTl0RFptc2xtcGtEdFJNVlJ1aF9CQlM1OC1tdWNIVmRn0gHKAUFVX3lxTFBwSkVoV2dQT21RMUpVNFUxa2FzTmo5X0ZVNDY2MkNhenN2dU1Lc3A4Q3Y3aDUtX2JxeWZjeVp6bURZanMyOXRyc3pyVkxKQzBWUnJ3NFFFYWxncFllNUZRN1RYWjJ6NG1GMllhMXRaZ19PcldWODJTVUZHN1RQS1lYODFHM2g2X01rekU1aTUwR09jdl84WlR3SDdpZUxKWUgwWUIxRmE5QlN5OXREWm1zbG1wa0R0Uk1WUnVoX0JCUzU4LW11Y0hWZGc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMi7AFBVV95cUxOeEplYndXRlFDdkk1MlYyNXo4ZVhrRmg5WFF6Wk9FUG43M2ZnRnRzUEpJMmY4N0J4ajU4VGRvbm5RTW9RUU5RRUMwVGdrMy1TcXgyUlctNmtOS0xvYzJhZmN5M0Zyc3dOcEM4Y2hmcHpTQ2hoU3lpVmJSaTQzT3pqdkd0QnBJa011djg4ZkJxdkRzVXY0RHVxQzZRRHVuaGFfTnVPbVFJUjhGR0xtUHhucW9oaWdpSUlDSkxBU0FLc04yZGZRN2Rwbm5oeUdObEEzX09fd3psVHV6b1p5aW10VnVIWHVoOFNoclRfaw?oc=5" target="_blank" rel="noopener">2026 Country Report: Benin Has Strong Assets to Attract More Investment, Says African Development Bank Group Report</a></h4>
+<p class="card-meta">African Development Bank Group · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMi7AFBVV95cUxOeEplYndXRlFDdkk1MlYyNXo4ZVhrRmg5WFF6Wk9FUG43M2ZnRnRzUEpJMmY4N0J4ajU4VGRvbm5RTW9RUU5RRUMwVGdrMy1TcXgyUlctNmtOS0xvYzJhZmN5M0Zyc3dOcEM4Y2hmcHpTQ2hoU3lpVmJSaTQzT3pqdkd0QnBJa011djg4ZkJxdkRzVXY0RHVxQzZRRHVuaGFfTnVPbVFJUjhGR0xtUHhucW9oaWdpSUlDSkxBU0FLc04yZGZRN2Rwbm5oeUdObEEzX09fd3psVHV6b1p5aW10VnVIWHVoOFNoclRfaw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Burkina_Faso">
+<h3 class="entity-hed">Burkina Faso</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.theafricareport.com/431360/burkina-fasos-great-green-wall-is-being-stalled-by-more-than-war/" target="_blank" rel="noopener">Burkina Faso’s Great Green Wall is being stalled by more than war</a></h4>
+<p class="card-meta">The Africa Report · 22 Sep 2026</p>
+<div class="excerpt"><p>Martin stands above a valley near Dori, in northern Burkina Faso , looking out over dusty earth and scattered, drought-stricken trees.</p><p>“It was greener here ten years ago,” the 54-year-old says.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.connectingafrica.com/investment/nigeria-digital-economy-unga-side-event-draws-calls-for-clean-business" target="_blank" rel="noopener">Nigeria digital economy UNGA side event draws calls for 'clean' business</a></h4>
+<p class="card-meta">Connecting Africa · 23 Sep 2026</p>
+<div class="excerpt"><p>Nigeria's Minister of Communications, Innovation and Digital Economy Bosun Tijani on Monday touted the nation's recent initiatives, including Project Bridge (Building Resilient Digital Infrastructure for Growth), which he said has attracted more investment offers than needed.</p><p>He was speaking at an event on the sidelines of the 81st session of the United Nations General Assembly (UNGA) in New York.</p><p>Despite the nation's success in attracting US$200 million from institutions such as the African Development Bank Group and $500 million from the World Development Bank Group in April, one telecom executive noted that business in Nigeria must be pursued with integrity.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxOaGdvTGVvS2VsbnFVcUJSTmIzNkQ5QXBJeGYyekVtVDNaX3ZURXZ5MVBWTG9iSzVEUXhFekItemN1U05UZlBackppTm9Ec0hfcmZVMERuNFZiNFNkR1pSdTY1dmduN3N0eGktQUFDd2t1RDFBdDNxT0tTbEtfSGl5dzVkTF9NeGpORDg0aG5RVGRYV3hvVGd4ZXZyaTBmOFY2SzctV0tmZ21OWlJyRHh4VkVZbU9aeDFDYk9fMnNBRU5fTGlTSHdYaFJpNHVSRk1YOGc?oc=5" target="_blank" rel="noopener">Senegal's President Faye: Macky Sall best candidate 'to fight for Africa' at UN</a></h4>
+<p class="card-meta">rfi.fr · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxOaGdvTGVvS2VsbnFVcUJSTmIzNkQ5QXBJeGYyekVtVDNaX3ZURXZ5MVBWTG9iSzVEUXhFekItemN1U05UZlBackppTm9Ec0hfcmZVMERuNFZiNFNkR1pSdTY1dmduN3N0eGktQUFDd2t1RDFBdDNxT0tTbEtfSGl5dzVkTF9NeGpORDg0aG5RVGRYV3hvVGd4ZXZyaTBmOFY2SzctV0tmZ21OWlJyRHh4VkVZbU9aeDFDYk9fMnNBRU5fTGlTSHdYaFJpNHVSRk1YOGc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Côte_d_Ivoire">
+<h3 class="entity-hed">Côte d'Ivoire</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxNODdzd1RQaVlTVWxUUmI0WU04MXBHZU9BaHpzMmhjUkRydmh0R3pJaGw3UnQySkpzZGg4M1doeEw5TjhFQUNNZExPRGsyWllnMndNYWdjbUFXVVZOOVFjeVgtMFp5REgxSlkwY0RLdHZwT2ZYNEpLNHV3Z1Vlb05saVdsVWZXdWlqMjlLNjVWQzcxQXFmN2FmdndCWkotdDV6b0dXTmE3aUhOMnoybmlaNDQ2NEJjcGlOVTZEOHN6UFZEdw?oc=5" target="_blank" rel="noopener">A Côte d’Ivoire mine pours first gold after creating about 3,600 construction jobs</a></h4>
+<p class="card-meta">Stock Titan · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxNODdzd1RQaVlTVWxUUmI0WU04MXBHZU9BaHpzMmhjUkRydmh0R3pJaGw3UnQySkpzZGg4M1doeEw5TjhFQUNNZExPRGsyWllnMndNYWdjbUFXVVZOOVFjeVgtMFp5REgxSlkwY0RLdHZwT2ZYNEpLNHV3Z1Vlb05saVdsVWZXdWlqMjlLNjVWQzcxQXFmN2FmdndCWkotdDV6b0dXTmE3aUhOMnoybmlaNDQ2NEJjcGlOVTZEOHN6UFZEdw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.ebrd.com/home/news-and-events/news/2026/ebrd-moderates-sub-saharan-africa-outlook-despite-resilient-econ.html" target="_blank" rel="noopener">EBRD moderates sub-Saharan Africa outlook despite resilient economic performance</a></h4>
+<p class="card-meta">EBRD · 24 Sep 2026</p>
+<div class="excerpt"><p>In its latest Regional Economic Prospects report, the European Bank for Reconstruction and Development (EBRD) has revised down its forecast for the Bank's sub-Saharan Africa (SSA) economies from 5.1 per cent in the first half of 2026 to 4.8 per cent for 2026, before moderating it slightly to 4.7 per cent in 2027.</p><p>Economic activity remained resilient in the first half of 2026, supported by services, agriculture and commodity exports. However, the external environment has become more challenging; higher oil prices and disruptions to global trade routes linked to the conflict in the Middle East have driven up costs across the region, while fiscal vulnerabilities, El Niño-related risks and weaker cocoa prices continue to weigh on prospects in several markets.</p><p>Progress on reforms has strengthened confidence in a number of economies. Benin, Côte d'Ivoire and Ghana completed International Monetary Fund (IMF)-supported programmes in 2026, while Benin, Kenya, Ghana and Nigeria received sovereign rating upgrades during the year. However, high debt-servicing costs continue to constrain fiscal space in several countries. In the near term, growth is expected to remain supported by agriculture, manufacturing, services and commodity production, although momentum is projected to soften as commodity windfalls fade.</p></div>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.arise.tv/ecowas-uemoa-cilss-adopt-plan-to-tackle-west-africas-water-crisis/" target="_blank" rel="noopener">ECOWAS, UEMOA, CILSS Adopt Plan To Tackle West Africa’s Water Crisis</a></h4>
+<p class="card-meta">Arise News · 28 Sep 2026</p>
+<div class="excerpt"><p>West African countries have moved to strengthen regional control and cooperation over their increasingly strategic water resources, adopting a common agenda aimed at tackling water insecurity, climate pressures, transboundary disputes and inadequate financing of the sector.</p><p>The decision was reached at the inaugural West Africa Regional Water Forum (FREAO) in Abidjan, Côte d’Ivoire, where governments and regional institutions agreed to translate water governance from a largely technical concern into a strategic instrument for food security, economic transformation, environmental protection and regional stability.</p><p>The two-day forum, held from September 24 to 25 under the theme, “Valuing Water to Transform West Africa,” was convened by the Economic Community of West African States (ECOWAS), in partnership with the West African Economic and Monetary Union (UEMOA) and the Permanent Interstate Committee for Drought Control in the Sahel (CILSS).</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Guinea_Bissau">
+<h3 class="entity-hed">Guinea-Bissau</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://splash247.com/shippings-answer-to-geopolitics-go-around/" target="_blank" rel="noopener">Shipping’s answer to geopolitics: go around</a></h4>
+<p class="card-meta">splash247.com · 28 Sep 2026</p>
+<p class="read-link"><a href="https://splash247.com/shippings-answer-to-geopolitics-go-around/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTFBxODRCZUtRRnJWQm5JZTFGVVlDaGJ6T0VsbkNLbmU2dWVCcWw3VWRXdDVlOFc3ZnR3b1lySTBtM2lGNHpqYnBSNWF4NElQLWxpb3pBTXlHdnd2MjVOT2dWTHVn?oc=5" target="_blank" rel="noopener">Republic of Guinea</a></h4>
+<p class="card-meta">African Development Bank Group · 22 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTFBxODRCZUtRRnJWQm5JZTFGVVlDaGJ6T0VsbkNLbmU2dWVCcWw3VWRXdDVlOFc3ZnR3b1lySTBtM2lGNHpqYnBSNWF4NElQLWxpb3pBTXlHdnd2MjVOT2dWTHVn?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://macaubusiness.com/sao-tome-eu-observer-mission-highlights-peaceful-voting/" target="_blank" rel="noopener">Sao Tome: EU observer mission highlights peaceful voting</a></h4>
+<p class="card-meta">macaubusiness.com · 27 Sep 2026</p>
+<div class="excerpt"><p>The head of the European Union (EU) election observation mission said today’s elections in Sao Tome and Príncipe are taking place peacefully and smoothly.</p><p>«The elections have been proceeding in an orderly, tranquil, peaceful and calm manner. Power supplies have remained stable, and all polling stations have opened, unlike during the presidential elections, and we note this with great satisfaction,» Portuguese MEP Sérgio Humberto said.</p><p>«So far, we have observed around 50 (…) polling stations. We have witnessed 15 opening ceremonies, and everything has proceeded smoothly. The only point we can highlight from our observations is a slight delay in the opening of some polling stations,» he added, alongside the head of the European Parliament’s observation mission, Ana Catarina Mendes.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Mali">
+<h3 class="entity-hed">Mali</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE8zRGtjUk92czVpaTA0cDRqeDgzZGhiamZhNEJJSVlxTnd1QUFyR2RVZ3ZvSUk5V1o4ckdGdGg5NkNacWNtdnNKUWVrS29ZMkgzUVZrUFhNbWVGQmpPeG9DbThfRlhjQUpGNHMtTks2dXhxUU8zZFR4NkFKUQ?oc=5" target="_blank" rel="noopener">Peruvians Fighting for Russia, Israel’s Illegal Settlements, Mali’s Drone War, and the Data Center Heat Effect</a></h4>
+<p class="card-meta">Global Investigative Journalism Network (GIJN) · 25 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE8zRGtjUk92czVpaTA0cDRqeDgzZGhiamZhNEJJSVlxTnd1QUFyR2RVZ3ZvSUk5V1o4ckdGdGg5NkNacWNtdnNKUWVrS29ZMkgzUVZrUFhNbWVGQmpPeG9DbThfRlhjQUpGNHMtTks2dXhxUU8zZFR4NkFKUQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxNaG1IeENwOW9oTWFXTWdfZUVFc2lZWlRWQ1FWQ2pYdHk5a21DTFozUmN1cC1mVnFRSHZvbWlHdXVIZUVyZU9PajZITFc4WDNRYkJGV1dCa0RrUms0YzBlQ3NnS2ctTHJDQmRDeFpneVd3MDRoMHJmcFBXNGxyNGkwdGFhcWJfdThiQkxhLW5MZXk2cktGdkg1Vkp6VlJMVElGQjNlVUQ0R2t0X0dnNEV0X0d3?oc=5" target="_blank" rel="noopener">Barrick Mining Reaches Deal With Mali Unions, Averting Strikes</a></h4>
+<p class="card-meta">Bloomberg.com · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxNaG1IeENwOW9oTWFXTWdfZUVFc2lZWlRWQ1FWQ2pYdHk5a21DTFozUmN1cC1mVnFRSHZvbWlHdXVIZUVyZU9PajZITFc4WDNRYkJGV1dCa0RrUms0YzBlQ3NnS2ctTHJDQmRDeFpneVd3MDRoMHJmcFBXNGxyNGkwdGFhcWJfdThiQkxhLW5MZXk2cktGdkg1Vkp6VlJMVElGQjNlVUQ0R2t0X0dnNEV0X0d3?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://sundayworld.co.za/news/barrick-mining-reaches-deal-with-mali-gold-unions-averting-strike/" target="_blank" rel="noopener">Barrick Mining reaches deal with Mali gold unions, averting strike</a></h4>
+<p class="card-meta">sundayworld.co.za · 27 Sep 2026</p>
+<p class="read-link"><a href="https://sundayworld.co.za/news/barrick-mining-reaches-deal-with-mali-gold-unions-averting-strike/" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Niger">
+<h3 class="entity-hed">Niger</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxQYzRMbm9Rc3lOVThrRWpJR2RyNmZwQWZteUpGOC1KRUVGZURjMXJzT2hWVXMwcFpVbTEtWVQxY29hU2U1eXBraWoxY0Jzd1R2LTFNaF9xb0Jrb3JhTVAtWVNaaUR2dnVaV3JQREtmazFQVGFkbHR5b0s2SEl0Ykx2cmFNMWJmVUNScmV0Q015QVpCTFpNQWRodXU2c1Q?oc=5" target="_blank" rel="noopener">Niger: $10 million and 1,000 jobs to revive the Madaouela uranium project</a></h4>
+<p class="card-meta">Benin Web TV · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxQYzRMbm9Rc3lOVThrRWpJR2RyNmZwQWZteUpGOC1KRUVGZURjMXJzT2hWVXMwcFpVbTEtWVQxY29hU2U1eXBraWoxY0Jzd1R2LTFNaF9xb0Jrb3JhTVAtWVNaaUR2dnVaV3JQREtmazFQVGFkbHR5b0s2SEl0Ykx2cmFNMWJmVUNScmV0Q015QVpCTFpNQWRodXU2c1Q?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE1qSjlqYlZWdW9MVFV4SDZzZ1U1MTZMWkN6VUtjR2U1MUFGTGJSbnozM3U2YTgtTnBpLUpqRjRpaWlJdzF3ZE1WS0xuZFpjWHR1dUpQTTh4YmtublNhcmfSAWNBVV95cUxNZUFSNE04azNqUTE4NUhhM1QtcnVENzBnTm5pS2JGVHIwT21kTlluTTRyNm9XN2txRTRhc1NmdHFFRWpUMVZDWE5aZGdjUHBfOWZjRWZXME1MRmVCX1FueGZybmc?oc=5" target="_blank" rel="noopener">Niger fight against terrorism: General Abdourahamane Tiani govment issue new money policy wey to control movement of cash and terrorist activities</a></h4>
+<p class="card-meta">BBC · 23 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE1qSjlqYlZWdW9MVFV4SDZzZ1U1MTZMWkN6VUtjR2U1MUFGTGJSbnozM3U2YTgtTnBpLUpqRjRpaWlJdzF3ZE1WS0xuZFpjWHR1dUpQTTh4YmtublNhcmfSAWNBVV95cUxNZUFSNE04azNqUTE4NUhhM1QtcnVENzBnTm5pS2JGVHIwT21kTlluTTRyNm9XN2txRTRhc1NmdHFFRWpUMVZDWE5aZGdjUHBfOWZjRWZXME1MRmVCX1FueGZybmc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Workforce &amp; Human Capital</div>
+<article class="card">
+<div class="tags"><span class="tag" style="border-color:#4a2060;color:#4a2060">Women</span></div><h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE9KV2o2aFRDTWlOczNlR3pIb0lGWDdsZ05nTVEzLWFGSnYtdXV6RnFRWjZoeFFxRFhwelh3MU1Lc1FFQjlhbUxpRXZCXzJMNFJjOE5DNFNBWE5yMUMta1HSAWNBVV95cUxObFZraVVNWGVaZmtwS0xtQjZ0VVdETllrOXFURGV4QVdvQU5EaE1sLTBMUW11ejZzcllwdkxpaXQyekdNU1JhVWktTVVyeTZIWXBtUDBTZm5mdlpqWWw3akJhUXc?oc=5" target="_blank" rel="noopener">Olu of Warri wife interview: Olori Atuwatse III tok about education for Niger Delta and barriers African women dey face</a></h4>
+<p class="card-meta">BBC · 24 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE9KV2o2aFRDTWlOczNlR3pIb0lGWDdsZ05nTVEzLWFGSnYtdXV6RnFRWjZoeFFxRFhwelh3MU1Lc1FFQjlhbUxpRXZCXzJMNFJjOE5DNFNBWE5yMUMta1HSAWNBVV95cUxObFZraVVNWGVaZmtwS0xtQjZ0VVdETllrOXFURGV4QVdvQU5EaE1sLTBMUW11ejZzcllwdkxpaXQyekdNU1JhVWktTVVyeTZIWXBtUDBTZm5mdlpqWWw3akJhUXc?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Togo">
+<h3 class="entity-hed">Togo</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/2509-20168-togo-lands-cfaf-82bn-boad-financing-for-agriculture-and-energy-storage" target="_blank" rel="noopener">Togo Lands CFAF 82bn BOAD Financing for Agriculture and Energy Storage</a></h4>
+<p class="card-meta">Togo First · 25 Sep 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/2509-20168-togo-lands-cfaf-82bn-boad-financing-for-agriculture-and-energy-storage" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/2709-20180-togo-s-b-pilot-offers-small-businesses-a-simpler-way-to-manage-finances" target="_blank" rel="noopener">Togo’s B Pilot Offers Small Businesses a Simpler Way to Manage Finances</a></h4>
+<p class="card-meta">Togo First · 27 Sep 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/2709-20180-togo-s-b-pilot-offers-small-businesses-a-simpler-way-to-manage-finances" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Digital Economy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/itc/2509-20170-togo-mali-data-regulators-agree-to-share-expertise" target="_blank" rel="noopener">Togo, Mali Data Regulators Agree to Share Expertise</a></h4>
+<p class="card-meta">Togo First · 25 Sep 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/itc/2509-20170-togo-mali-data-regulators-agree-to-share-expertise" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+    <section class="geo-section" id="regional">
+<div class="section-rule"><span class="section-label">Regional</span></div>
+<div class="entity-block" id="WAEMU">
+<h3 class="entity-hed">WAEMU</h3>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/2109-20128-togo-s-debt-stock-rises-3-4-but-debt-ratio-falls-to-60-2-of-gdp-by-june-2026" target="_blank" rel="noopener">Togo’s Debt Stock Rises 3.4% but Debt Ratio Falls to 60.2% of GDP by June 2026</a></h4>
+<p class="card-meta">Togo First · 21 Sep 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/2109-20128-togo-s-debt-stock-rises-3-4-but-debt-ratio-falls-to-60-2-of-gdp-by-june-2026" target="_blank" rel="noopener">Read article</a></p>
+</article>
+<article class="card">
+<h4 class="card-hed"><a href="https://www.togofirst.com/en/economic-governance/2209-20140-togo-trains-businesses-to-qualify-for-preferential-trade-tariffs" target="_blank" rel="noopener">Togo Trains Businesses to Qualify for Preferential Trade Tariffs</a></h4>
+<p class="card-meta">Togo First · 22 Sep 2026</p>
+<p class="read-link"><a href="https://www.togofirst.com/en/economic-governance/2209-20140-togo-trains-businesses-to-qualify-for-preferential-trade-tariffs" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://gazettengr.com/west-african-ministers-adopt-new-water-governance-resolutions/" target="_blank" rel="noopener">West African ministers adopt new water governance resolutions</a></h4>
+<p class="card-meta">gazettengr.com · 25 Sep 2026</p>
+<div class="excerpt"><p>ECOWAS ministers have reaffirmed their commitment to strengthen regional water governance.</p><p>West African ministers have reaffirmed their commitment to Integrated Water Resources Management (IWRM), adopting strategic resolutions in Abidjan, Côte d’Ivoire, to strengthen regional water governance and protect the region from climate change.</p><p>The strategic decisions adopted in Abidjan have shifted how West African nations view water as not merely a natural resource but as a strategic asset for regional integration, economic transformation, human security and sustainable development.</p></div>
+</article>
+</div>
+</div>
+<div class="entity-block" id="Africa">
+<h3 class="entity-hed">Africa</h3>
+<div class="pillar-block">
+<div class="pillar-label">Jobs &amp; Employment</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxPRG5qNWFYVnpkck9fYkpSN3VIdGlseEttRE9idkVVb3gxQWpyc0VpUFFMdU5xcWgtczRyLVVyeGsyQ3RMM25pbUY1TXpicEdVX05idXVpSE9QSEZvUWhGc0I0RW9PYmdLZi1iQjRRa2tKX3lRRm1iSW9MaWg4ckdxTFg1QTFUVkRWMHRCbGVfczZ0Zy1IVkFMa1NneDVFeUNaaEo1S0kydjVoaDFYX1VnZW43QlFfMjJUTDBn?oc=5" target="_blank" rel="noopener">It’s More Than Football for Moroccan Voters</a></h4>
+<p class="card-meta">Bloomberg · 23 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxPRG5qNWFYVnpkck9fYkpSN3VIdGlseEttRE9idkVVb3gxQWpyc0VpUFFMdU5xcWgtczRyLVVyeGsyQ3RMM25pbUY1TXpicEdVX05idXVpSE9QSEZvUWhGc0I0RW9PYmdLZi1iQjRRa2tKX3lRRm1iSW9MaWg4ckdxTFg1QTFUVkRWMHRCbGVfczZ0Zy1IVkFMa1NneDVFeUNaaEo1S0kydjVoaDFYX1VnZW43QlFfMjJUTDBn?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Macroeconomy</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQOWdFMVRXOUxpQnZnN3BNYzZvN0Jrd21iVWtDcVRvQ2Q2Wjk2TkpFZnlUcGxzc2hiR3VtOG83MThvekxzYnpKRFBHbUsyTVBkNTNTZHUxUmtEWklDNGJoQVhBcGJ3NzNDUXIzTXBpQU90OGcwWi13R0hmTU5nczNJOHhHc0lrQ2tIZ29pZ1Uza2xKZDJDRWRDQ2ZYMko3UHBPTGdCZGJKaVJUWkxoaTRMS3Fnbw?oc=5" target="_blank" rel="noopener">South African rand falls as rate hike, higher inflation cloud outlook</a></h4>
+<p class="card-meta">Reuters · 23 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQOWdFMVRXOUxpQnZnN3BNYzZvN0Jrd21iVWtDcVRvQ2Q2Wjk2TkpFZnlUcGxzc2hiR3VtOG83MThvekxzYnpKRFBHbUsyTVBkNTNTZHUxUmtEWklDNGJoQVhBcGJ3NzNDUXIzTXBpQU90OGcwWi13R0hmTU5nczNJOHhHc0lrQ2tIZ29pZ1Uza2xKZDJDRWRDQ2ZYMko3UHBPTGdCZGJKaVJUWkxoaTRMS3Fnbw?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+<div class="pillar-block">
+<div class="pillar-label">Governance</div>
+<article class="card">
+<h4 class="card-hed"><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxQR2EyakRfYnN4VnV2MFRsWmF1MXRHQXBObVl0c29NMEJoRUFoS0JCUVlWaEF5T1dqb3VHRHNLOWsyVXFoa2ZfcGpSdE8xRWVZNmJoWGhWVUVsbWEzRF9Tb01sQmgzaHVfTFAwLWtXMWRRWGtvdUlFYlFET2Y0eHJJT2c3cUJJcU1VYnZmMEpKc2dJYlVuaEk0UnFhYzA0dDg5WTY5bFJBNVhhOEttNThlTE93Y0VLQQ?oc=5" target="_blank" rel="noopener">South Africa reels from two shootings that kill 27 in one night</a></h4>
+<p class="card-meta">Reuters · 27 Sep 2026</p>
+<p class="read-link"><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxQR2EyakRfYnN4VnV2MFRsWmF1MXRHQXBObVl0c29NMEJoRUFoS0JCUVlWaEF5T1dqb3VHRHNLOWsyVXFoa2ZfcGpSdE8xRWVZNmJoWGhWVUVsbWEzRF9Tb01sQmgzaHVfTFAwLWtXMWRRWGtvdUlFYlFET2Y0eHJJT2c3cUJJcU1VYnZmMEpKc2dJYlVuaEk0UnFhYzA0dDg5WTY5bFJBNVhhOEttNThlTE93Y0VLQQ?oc=5" target="_blank" rel="noopener">Read article</a></p>
+</article>
+</div>
+</div>
+</section>
+
+  </main>
+
+</div>
+
+<!-- Footer with scraping disclaimer and tag legend -->
+<footer class="footer">
+  <strong>Weekly News Roundup: Africa Youth Employment &amp; Macrotrends</strong><br>
+  Monday 28 September 2026 &nbsp;·&nbsp; Mon, 28 Sep 2026 06:30 UTC<br>
+  Articles sourced from Google News RSS · Top 3 per country ranked by estimated reach<br>
+  Excerpts reproduced verbatim from publisher pages where accessible<br><br>
+  This roundup is produced automatically through a news scraper. Kindly click each article
+  title to read the full piece on the original publisher's site. Content has not been
+  editorially reviewed.<br><br>
+  Tags applied where terms appear in article titles or extracted text:
+  <strong>Youth · Women · Disabilities · Refugees · World Data Lab</strong>
+</footer>
+
+</body>
+</html>
